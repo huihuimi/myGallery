@@ -1,3 +1,9 @@
+// import {AppList} from "./App_List.js";
+// import {AppBackGroundBoard} from "./App_BackGroundBoard.js";
+// import {AppZoomBar} from "./App_ZoomBar.js";
+// import {AppNavBar} from "./App_NavBar.js";
+// import {AppHeaderBar} from "./App_HeaderBar.js";
+// import {config} from "../config.js";
 //listPage的定义
 const AppListPage = {
 	// 导入组件
@@ -235,12 +241,7 @@ const AppListPage = {
 		},
 	},
 	computed: {
-		// 给list组件传递的数据
-		giveInfoToList() {
-			return {
-				cardInfoList: this.cardInfoList,
-			};
-		},
+		
 	},
 	watch: {
 		cardInfoList(newVal, oldVal) {

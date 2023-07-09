@@ -1,6 +1,7 @@
+// import {config} from "../config.js";
 // 导航栏定义
 const AppNavBar = {
-  template:/*html*/`
+	template: /*html*/ `
   <div id="navBarBox" @contextmenu.prevent.native="(e)=>{e.preventDefault()}">
     <div id="navBarBody">
       <!-- 导航栏折叠框 -->
@@ -113,101 +114,90 @@ const AppNavBar = {
     
   </div>
   `,
-  props: {
-    onceLoadMaxCount: Number,
-    loadingState: Object,
-    selectingInfo: Object,
-  },
-  emits: [
-    'returnBtnInfo',
-    'returnOnceLoadingMax',
-    'downloadRequest',
-    'reVerifyAllCard',
-    'toNormalMode',
-    'allSelectRequest',
-    'cleanSelectionRequest',
-    'loadingRemainingRequest',
-  ],
-  computed: {
-    getPercentage() {
-      if (this.loadingState.nowCount == 0 || this.loadingState.allCount == 0) {
-        return `0%`
-      } else {
-        return `${(this.loadingState.nowCount / this.loadingState.allCount) * 100}%`
-      }
-
-    },
-    getOnceLoadingMax: {
-      get() {
-        return this.onceLoadMaxCount
-      },
-      set(value) {
-        this.$emit('returnOnceLoadingMax', value)
-      }
-    },
-  },
-  data() {
-    return {
-      unfold: true,
-      info: {
-        openQuickerInteraction: config.openQuickerInteraction,
-      },
-      btn: {
-        slowLoading: false,// 缓慢加载切换按钮
-        NSFWMode: config.initNSFWState,// NSFW模式切换按钮
-        cardTitleShow: config.initCardTitleState,// 卡片标题显示切换按钮
-        enableSwitchBackGround:
-          config.initClickSwBackgroundState, // "运行背景切换"切换按钮
-        openScrollSnap: config.initOpenScrollSnap,// 滚动吸附切换按钮
-        listPageShow: true,// 画廊显示切换按钮
-      }
-    }
-  },
-  watch: {
-    btn: {
-      handler(newVal, oldVal) {
-        // console.log(newVal);
-        this.$emit('returnBtnInfo', {
-          slowLoading: newVal.slowLoading,
-          enableSwitchBackGround: newVal.enableSwitchBackGround,
-          openScrollSnap: newVal.openScrollSnap,
-        })
-      },
-      deep: true //深度监听
-    }
-  },
-  methods: {
-    // 向父组件发送"下载"请求
-    sendDownloadRequest() {
-      this.$emit('downloadRequest')
-    },
-    // 向父组件发送"切换普通模式"请求
-    sendToNormalModeRequest() {
-      this.$emit('toNormalMode')
-    },
-    // 向父组件发送"全部重新验证"请求
-    sendReVerifyAllCardRequest() {
-      this.$emit('reVerifyAllCard')
-    },
-    // 向父组件发送"全选"请求
-    sendAllSelectRequest(value) {
-      this.$emit('allSelectRequest', value)
-    },
-    // 向父组件发送"清空选择"请求
-    sendCleanSelectionRequest() {
-      this.$emit('cleanSelectionRequest')
-    },
-    // 向父组件发送"记住剩余项"请求
-    sendLoadingRemainingRequest() {
-      this.$emit('loadingRemainingRequest')
-    },
-  },
-  created() {
-    this.$emit('returnBtnInfo', {
-      slowLoading: this.btn.slowLoading,
-      enableSwitchBackGround: this.btn.enableSwitchBackGround,
-      openScrollSnap: this.btn.openScrollSnap,
-    })
-  },
-}
-// export{AppNavBar}
+	props: {
+		onceLoadMaxCount: Number,
+		loadingState: Object,
+		selectingInfo: Object,
+	},
+	emits: ["returnBtnInfo", "returnOnceLoadingMax", "downloadRequest", "reVerifyAllCard", "toNormalMode", "allSelectRequest", "cleanSelectionRequest", "loadingRemainingRequest"],
+	computed: {
+		getPercentage() {
+			if (this.loadingState.nowCount == 0 || this.loadingState.allCount == 0) {
+				return `0%`;
+			} else {
+				return `${(this.loadingState.nowCount / this.loadingState.allCount) * 100}%`;
+			}
+		},
+		getOnceLoadingMax: {
+			get() {
+				return this.onceLoadMaxCount;
+			},
+			set(value) {
+				this.$emit("returnOnceLoadingMax", value);
+			},
+		},
+	},
+	data() {
+		return {
+			unfold: true,
+			info: {
+				openQuickerInteraction: config.openQuickerInteraction,
+			},
+			btn: {
+				slowLoading: false, // 缓慢加载切换按钮
+				NSFWMode: config.initNSFWState, // NSFW模式切换按钮
+				cardTitleShow: config.initCardTitleState, // 卡片标题显示切换按钮
+				enableSwitchBackGround: config.initClickSwBackgroundState, // "运行背景切换"切换按钮
+				openScrollSnap: config.initOpenScrollSnap, // 滚动吸附切换按钮
+				listPageShow: true, // 画廊显示切换按钮
+			},
+		};
+	},
+	watch: {
+		btn: {
+			handler(newVal, oldVal) {
+				// console.log(newVal);
+				this.$emit("returnBtnInfo", {
+					slowLoading: newVal.slowLoading,
+					enableSwitchBackGround: newVal.enableSwitchBackGround,
+					openScrollSnap: newVal.openScrollSnap,
+				});
+			},
+			deep: true, //深度监听
+		},
+	},
+	methods: {
+		// 向父组件发送"下载"请求
+		sendDownloadRequest() {
+			this.$emit("downloadRequest");
+		},
+		// 向父组件发送"切换普通模式"请求
+		sendToNormalModeRequest() {
+			this.$emit("toNormalMode");
+		},
+		// 向父组件发送"全部重新验证"请求
+		sendReVerifyAllCardRequest() {
+			this.$emit("reVerifyAllCard");
+		},
+		// 向父组件发送"全选"请求
+		sendAllSelectRequest(value) {
+			this.$emit("allSelectRequest", value);
+		},
+		// 向父组件发送"清空选择"请求
+		sendCleanSelectionRequest() {
+			this.$emit("cleanSelectionRequest");
+		},
+		// 向父组件发送"记住剩余项"请求
+		sendLoadingRemainingRequest() {
+			this.$emit("loadingRemainingRequest");
+		},
+	},
+	created() {
+		this.$emit("returnBtnInfo", {
+			slowLoading: this.btn.slowLoading,
+			enableSwitchBackGround: this.btn.enableSwitchBackGround,
+			openScrollSnap: this.btn.openScrollSnap,
+		});
+	},
+};
+// export {AppNavBar};

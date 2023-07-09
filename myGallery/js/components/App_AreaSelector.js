@@ -209,10 +209,11 @@ const AppAreaSelector = {
 			const {clientX, clientY, ctrlKey} = e; //记录鼠标相对视窗的坐标和按下的按键
 			// 记录是否按下ctrl键
 			this.ctrlKeyPressed = ctrlKey;
-			// 初始化被选id列表(缓存)和反选id列表
-			// this.selectingInfo.tempCardSet = new Set(this.selectingInfo.cardSet)
 			if (ctrlKey) {
-				this.lastTimeSelectedSet = new Set(this.selectingInfo.cardSet);
+				this.lastTimeSelectedSet = new Set();
+				this.selectingInfo.cardSet.forEach((card) => {
+					this.lastTimeSelectedSet.add(card);
+				});
 			} else {
 				this.selectingInfo.tempCardSet = new Set();
 			}
@@ -256,7 +257,10 @@ const AppAreaSelector = {
 			// 隐藏选区div
 			this.switchShowArea(0);
 			// 更新结果
-			this.selectingInfo.cardSet = new Set(this.selectingInfo.tempCardSet);
+			this.selectingInfo.cardSet = new Set();
+			this.selectingInfo.tempCardSet.forEach((card) => {
+				this.selectingInfo.cardSet.add(card);
+			});
 		},
 		// 鼠标拖动过程中的可选区域滚动
 		scrollOnDrag(mouseX, mouseY) {

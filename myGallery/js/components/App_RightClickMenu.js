@@ -128,7 +128,10 @@ const AppRightClickMenu = {
 			// [重新验证]按钮
 			this.info.show = false;
 			// 获取被点击对象以及被选中集合
-			let set = new Set(this.selectingInfo.cardSet);
+			let set = new Set();
+			this.selectingInfo.cardSet.forEach((card) => {
+				set.add(card);
+			});
 			set.add(this.targetCard);
 			// console.log(`待更新index列表:${indexList}`);
 			set.forEach((card) => {
@@ -146,7 +149,10 @@ const AppRightClickMenu = {
 			this.info.show = false;
 			// 获取被点击对象
 			// 获取被点击对象以及被选中集合
-			let set = new Set(this.selectingInfo.cardSet);
+			let set = new Set();
+			this.selectingInfo.cardSet.forEach((card) => {
+				set.add(card);
+			});
 			set.add(this.targetCard);
 			// console.log(`待更新index列表:${indexList}`);
 			let msg;

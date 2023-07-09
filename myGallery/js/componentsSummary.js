@@ -98,13 +98,11 @@ const AppCard = {
 		},
 	},
 };
-
-
-
+// export {AppCard};
 
 // 缩略图盒子定义
 const AppThumbBox = {
-  template: /*html*/ `
+	template: /*html*/ `
   <div class="thumb-box" 
   v-if="listInfo.loadedCardSet.has(card)"
   v-show="searchInfo.matchCardSet.has(card)"
@@ -123,27 +121,27 @@ const AppThumbBox = {
 
   </div>
   `,
-  props: {
-    card: Object,
-    listInfo: Object,
-    selectingInfo: Object,
-    searchInfo: Object,
-  },
-  directives: {
-    // [自定义指令] 定义懒加载图片或者文件等
-    lazy: {
-      // 当插入时执行
-      mounted(el, binding, vNode) {
-        // console.log(el, binding, vNode.ctx.props.card.contentShow)
-        el.dataset.show = false; //先设置为不显示(配合css)
-        let url = binding.value; //保存src
-        // 回调函数定义
-        let observer = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entire) => {
-              // 调用方法得到该elDOM元素是否处于可视区域
-              if (entire.isIntersecting) {
-                //回调是否处于可视区域，true or false
+	props: {
+		card: Object,
+		listInfo: Object,
+		selectingInfo: Object,
+		searchInfo: Object,
+	},
+	directives: {
+		// [自定义指令] 定义懒加载图片或者文件等
+		lazy: {
+			// 当插入时执行
+			mounted(el, binding, vNode) {
+				// console.log(el, binding, vNode.ctx.props.card.contentShow)
+				el.dataset.show = false; //先设置为不显示(配合css)
+				let url = binding.value; //保存src
+				// 回调函数定义
+				let observer = new IntersectionObserver(
+					(entries, observer) => {
+						entries.forEach((entire) => {
+							// 调用方法得到该elDOM元素是否处于可视区域
+							if (entire.isIntersecting) {
+								//回调是否处于可视区域，true or false
 								observer.unobserve(el); // 只需要监听一次即可，第二次滑动到可视区域时候不在监听
 								el.src = url; //如果处于可视区域额，将最开始保存的真实路径赋予DOM元素渲染
 								// el.dataset.show = true;
@@ -162,24 +160,25 @@ const AppThumbBox = {
 								} else {
 									el.dataset.show = true;
 								}
-              }
-            });
-          },
-          {
-            // root: document.querySelector('#preViewer'),
-            rootMargin: "10%",
-          }
-        ); // 设置阈值
-        // 监听调用
-        observer.observe(el);
-      },
-    },
-  },
+							}
+						});
+					},
+					{
+						// root: document.querySelector('#preViewer'),
+						rootMargin: "10%",
+					}
+				); // 设置阈值
+				// 监听调用
+				observer.observe(el);
+			},
+		},
+	},
 };
+// export {AppThumbBox};
 
 // 搜索框定义
 const AppSearchBox = {
-  template:/*html*/`
+	template: /*html*/ `
   <div class="search-container">
     <div class="search-box">
       <a class="search-btn">
@@ -196,104 +195,112 @@ const AppSearchBox = {
     </div>
   </div> 
   `,
-  props: {
-    cardInfoList: Array,
-  },
-  emits: ['returnMatchInfo'],
-  data() {
-    return {
-      content: '',
-      oldContent: '',
-      matchTags: [],
-      matchCardSet: new Set(),
-      matchCount: 0,
-    }
-  },
-  methods: {
-    //f 触发搜索事件
-    sendSearchResult() {
-      // 获取结果并更新标记
-      this.getMatchIndexList(this.matchTags)
-      // 并发送新结果给父组件
-      this.$emit('returnMatchInfo', {
-        matchTags: this.matchTags,
-        matchCardSet: this.matchCardSet,
-      })
-    },
-    //f 获取匹配信息
-    getMatchIndexList(matchTags = []) {
-      this.cardInfoList.forEach((card) => {
-        let isMatch = false
-        if (matchTags.length > 0) {
-          for (let i = 0, len = matchTags.length; i < len; i++) {
-            const matchTag = matchTags[i];
-            if (card.Content.toLowerCase().includes(matchTag.toLowerCase())
-              || (card.index + 1) == Number(matchTag)) {
-              isMatch = true
-            }
-          }
-        } else {
-          // 如果匹配关键词小于1则默认全部匹配
-          isMatch = true
-        }
-        if (isMatch) {
-          this.matchCardSet.add(card)
-        } else {
-          this.matchCardSet.delete(card)
-        }
-      })
-    },
-    //f 清空
-    clean() {
-      this.content = ''
-      this.matchCount = 0
-      this.matchCardSet = new Set(this.cardInfoList)
-      this.$emit('returnMatchInfo', {
-        matchTags: this.matchTags,
-        matchCardSet: this.matchCardSet,
-      })
-    },
-  },
-  computed: {
-    getMatchCount() {
-      return this.cardInfoList.filter((card) => {
-        let isMatch = false
-        if (this.matchTags.length > 0) {
-          for (let i = 0, len = this.matchTags.length; i < len; i++) {
-            const matchTag = this.matchTags[i];
-            if (card.Content.toLowerCase().includes(matchTag.toLowerCase())
-              || (card.index + 1) == Number(matchTag)) {
-              isMatch = true
-            }
-          }
-        } else {
-          // 如果匹配关键词小于1则默认全部匹配
-          isMatch = true
-        }
-        return isMatch
-      }).length
-    },
-  },
-  watch: {
-    //f 监视content变化(实时获取匹配结果)
-    content(newVal, oldVal) {
-      if (newVal == oldVal) {
-        return
-      }
-      // 获取匹配关键词
-      if (newVal.includes('|')) {
-        this.matchTags = newVal.split('|')
-      } else {
-        this.matchTags[0] = newVal
-      }
-    }
+	props: {
+		cardInfoList: Object,
+	},
+	emits: ["returnMatchInfo"],
+	data() {
+		return {
+			content: "",
+			oldContent: "",
+			matchTags: [],
+			matchCardSet: new Set(),
+			matchCount: 0,
+		};
+	},
+	methods: {
+		//f 触发搜索事件
+		async sendSearchResult() {
+			// 获取结果并更新标记
+			await this.getMatchIndexList(this.matchTags);
+			// console.log(this.cardInfoList,this.matchCardSet);
+			// 并发送新结果给父组件
+			this.$emit("returnMatchInfo", {
+				matchTags: this.matchTags,
+				matchCardSet: this.matchCardSet,
+			});
+		},
+		//f 获取匹配信息
+		async getMatchIndexList(matchTags = []) {
+			this.cardInfoList.forEach((card) => {
+				let isMatch = false;
+				if (matchTags.length > 0) {
+					for (let i = 0, len = matchTags.length; i < len; i++) {
+						const matchTag = matchTags[i];
+						if (card.Content.toLowerCase().includes(matchTag.toLowerCase()) || card.index + 1 == Number(matchTag)) {
+							isMatch = true;
+						}
+					}
+				} else {
+					// 如果匹配关键词小于1则默认全部匹配
+					isMatch = true;
+				}
+				if (isMatch) {
+					this.matchCardSet.add(card);
+				} else {
+					this.matchCardSet.delete(card);
+				}
+			});
+		},
+		//f 清空
+		async clean() {
+			this.content = "";
+			this.matchCount = 0;
+			this.matchCardSet = new Set();
+			this.cardInfoList.forEach((card) => {
+				this.matchCardSet.add(card);
+			});
+			this.$emit("returnMatchInfo", {
+				matchTags: this.matchTags,
+				matchCardSet: this.matchCardSet,
+			});
+		},
+	},
+	computed: {
+		getMatchCount() {
+			return this.cardInfoList.filter((card) => {
+				let isMatch = false;
+				if (this.matchTags.length > 0) {
+					for (let i = 0, len = this.matchTags.length; i < len; i++) {
+						const matchTag = this.matchTags[i];
+						if (card.Content.toLowerCase().includes(matchTag.toLowerCase()) || card.index + 1 == Number(matchTag)) {
+							isMatch = true;
+						}
+					}
+				} else {
+					// 如果匹配关键词小于1则默认全部匹配
+					isMatch = true;
+				}
+				return isMatch;
+			}).length;
+		},
+	},
+	watch: {
+		//f 监视cardInfoList变化
+		cardInfoList(newVal, oldVal) {
+			this.clean();
+		},
+		//f 监视content变化(实时获取匹配结果)
+		content(newVal, oldVal) {
+			if (newVal == oldVal) {
+				return;
+			}
+			// 获取匹配关键词
+			if (newVal.includes("|")) {
+				this.matchTags = newVal.split("|");
+			} else {
+				this.matchTags[0] = newVal;
+			}
+		},
+	},
+	mounted() {
+		this.getMatchIndexList(); //首次运行先进行一次搜索结果更新
+		this.sendSearchResult(); // 并发送新结果给父组件
+	},
+};
+// export {AppSearchBox};
 
-  },
-  mounted() {
-    this.getMatchIndexList() //首次运行先进行一次搜索结果更新
-    this.sendSearchResult()// 并发送新结果给父组件
-  },
-}
+// import { AppThumbBox } from "./App_ThumbBox.js";
 // viewer的定义
 const AppPreViewer = {
 	components: {AppThumbBox},
@@ -308,7 +315,8 @@ const AppPreViewer = {
 
     <span id="messageInViewer" v-cloak>
       ({{Number(info.nowIndex)+1}}/{{cardInfoList.length}})<br>
-      {{message.content}}
+      {{getMessage.name}}<br>
+			{{getMessage.width}}x{{getMessage.height}}
     </span>
 
     <!-- 悬浮按钮菜单 -->
@@ -350,12 +358,6 @@ const AppPreViewer = {
       }" 
       @mousedown="mousedownViewer" 
       @mousewheel.passive="zoomViewer">
-
-        <!-- 内容区img -->
-        <!-- <img id="showPic" alt="" ref="showPic"
-				data-show="false"
-        :src="info.picShowBoardUrl"
-				> -->
 
       </div>
 
@@ -465,9 +467,6 @@ const AppPreViewer = {
 			btn: {
 				openThumbTrackBtn: false,
 			},
-			message: {
-				content: "",
-			},
 			thumbnailViewport: {
 				height: 150,
 				style: {
@@ -479,7 +478,7 @@ const AppPreViewer = {
 	// 方法
 	methods: {
 		//f 图像显示函数
-		toShow(index) {
+		async toShow(index) {
 			this.info.nowIndex = index;
 			// 去除所点击的目标焦点
 			if (window.event != undefined) window.event.target.blur();
@@ -487,7 +486,6 @@ const AppPreViewer = {
 			this.$el.focus();
 			// 找到取得对应信息
 			const target = this.cardInfoList[index];
-			this.message.content = this.cardInfoList[this.info.nowIndex].Content;
 			this.info.width = target.Width;
 			this.info.height = target.Height;
 			this.info.style["aspect-ratio"] = target.scale;
@@ -564,7 +562,7 @@ const AppPreViewer = {
 			this.toCenter(this.info.nowIndex);
 		},
 		//f [图片预览器显示&居中&图片切换]
-		toCenter() {
+		async toCenter() {
 			const windowInfo = document.documentElement; //获取窗口信息
 			// 获取窗口信息
 			let ww = windowInfo.clientWidth;
@@ -598,20 +596,20 @@ const AppPreViewer = {
 			this.toCenterThumbBox();
 		},
 		//f 单击关闭
-		clickToClose(e) {
+		async clickToClose(e) {
 			// console.log(e.target);
 			if (e.target.id === "preViewer") {
 				this.closeViewer();
 			}
 		},
 		//f 双击关闭
-		dblClickToClose(e) {
+		async dblClickToClose(e) {
 			if (e.target.id === "showPic" || e.target.id === "picShowBoard" || e.target.id === "thumbnail-viewport") {
 				this.closeViewer();
 			}
 		},
 		//f 关闭窗口
-		closeViewer(toLocate = false) {
+		async closeViewer(toLocate = false) {
 			//* 清空画布
 			this.info.imgEle = null;
 			this.$refs.picShowBoard.innerHTML = "";
@@ -632,10 +630,6 @@ const AppPreViewer = {
 					height: "auto",
 				},
 			};
-			this.message = {
-				content: "",
-				nowNum: 1,
-			};
 			// 移除键盘事件
 			document.removeEventListener("keydown", this.keyboardViewer);
 			document.removeEventListener("wheel", this.wheelInViewer);
@@ -649,7 +643,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 窗口拖动函数
-		mousedownViewer(e) {
+		async mousedownViewer(e) {
 			let target = e.target;
 			if (target.id != "picShowBoard") {
 				target = target.parentNode;
@@ -741,7 +735,7 @@ const AppPreViewer = {
 		},
 
 		//f 定位按钮
-		toLocateTarget() {
+		async toLocateTarget() {
 			// 目标对象
 			const target = document.querySelector(`.card[data-index="${this.info.nowIndex}"]`);
 			// console.log(target);
@@ -775,14 +769,14 @@ const AppPreViewer = {
 			}
 		},
 		//f 缩略图track切换按钮
-		switchThumbnailTrack() {
+		async switchThumbnailTrack() {
 			// 更改按钮值
 			this.btn.openThumbTrackBtn = !this.btn.openThumbTrackBtn;
 			// 进行视图居中
 			this.toCenter();
 		},
 		//f 居中thumbBox
-		toCenterThumbBox() {
+		async toCenterThumbBox() {
 			if (this.info.show == false) {
 				return;
 			}
@@ -816,7 +810,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 翻页函数(0:向前,1:向后)
-		turnPage(value) {
+		async turnPage(value) {
 			let nowIndex = this.matchIndexList.indexOf(this.info.nowIndex);
 			if (nowIndex == -1) {
 				return;
@@ -852,7 +846,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 预览器的键盘事件
-		keyboardViewer(e) {
+		async keyboardViewer(e) {
 			this.$el.focus();
 			// 若当前是显示图片
 			if (this.info.showType == "img") {
@@ -898,7 +892,7 @@ const AppPreViewer = {
 			}
 		},
 		//f [视频播放器控制]
-		videoPlayerControl(command, option) {
+		async videoPlayerControl(command, option) {
 			// 获取视频播放器dom
 			const videoEle = this.$refs.showVideo;
 			videoEle.blur();
@@ -947,10 +941,27 @@ const AppPreViewer = {
 	},
 	// 计算属性
 	computed: {
+		//* 缩略图样式
 		getThumbnailViewportStyle: {
 			get() {
 				return this.thumbnailViewport.height + "px";
 			},
+		},
+		//* 展示信息
+		getMessage() {
+			let message = {
+				name: "",
+				width: 0,
+				height: 0,
+			};
+			if (this.info.showCard != null) {
+				let card = this.info.showCard;
+				message.name = card.Content;
+				message.width = parseInt(card.Width);
+				message.height = parseInt(card.Height);
+				// console.log(card.Width,card.Height);
+			}
+			return message;
 		},
 	},
 	watch: {},
@@ -959,10 +970,11 @@ const AppPreViewer = {
 	// [挂载后执行]
 	mounted() {},
 };
+// export { AppPreViewer };
 
 // 右键菜单样式
 const AppRightClickMenu = {
-  template: /*html*/ `
+	template: /*html*/ `
     <div class="right-click-menu" 
     :data-show="info.show" 
     :style="{
@@ -1033,110 +1045,109 @@ const AppRightClickMenu = {
       
     </div>
   `,
-  props: {
-    selectingInfo: Object, // 选中结果的集合信息
-  },
-  emits: [
-    "requestToShow",
-    "requestToVerifyCard",
-    "requestRemoveCard",
-    "requestSetBackGround",
-  ],
-  data() {
-    return {
-      targetCard: null,
-      info: {
-        show: false,
-        top: null,
-        left: null,
-      },
-    };
-  },
-  methods: {
-    // [右键菜单]
-    // 显示右键菜单
-    showMenu(e, card) {
-      // console.log(e, card);
-      // 获取当前点击位置的坐标
-      const { clientX, clientY } = e;
-      this.info.top = clientY;
-      this.info.left = clientX;
-      this.info.show = true;
+	props: {
+		selectingInfo: Object, // 选中结果的集合信息
+	},
+	emits: ["requestToShow", "requestToVerifyCard", "requestRemoveCard", "requestSetBackGround"],
+	data() {
+		return {
+			targetCard: null,
+			info: {
+				show: false,
+				top: null,
+				left: null,
+			},
+		};
+	},
+	methods: {
+		// [右键菜单]
+		// 显示右键菜单
+		showMenu(e, card) {
+			// console.log(e, card);
+			// 获取当前点击位置的坐标
+			const {clientX, clientY} = e;
+			this.info.top = clientY;
+			this.info.left = clientX;
+			this.info.show = true;
 
-      // 记录右键时点击的目标
-      this.targetCard = card;
-    },
-    closeMenu(e) {
-      if (
-        !e.target.classList.contains("right-click-menu") &&
-        !e.target.classList.contains("menu-option")
-      ) {
-        this.info.show = false;
-      }
-    },
-    // 菜单按钮事件
-    rightClickMenu_viewTarget() {
-      // [预览]按钮
-      this.info.show = false;
-      this.$emit("requestToShow", this.targetCard.index);
-    },
-    rightClickMenu_openInNewTAB() {
-      // [新标签中打开]按钮
-      this.info.show = false;
-      window.open(this.targetCard.LinkUrl, "_blank");
-    },
-    rightClickMenu_renameCard() {
-      // [重命名]按钮
-      this.info.show = false;
-      let newName = prompt("新名称", this.targetCard.Content);
-      const reg = /^\s*$/g;
-      if (newName != null && !reg.test(newName)) {
-        this.targetCard.Content = newName;
-      }
-    },
-    rightClickMenu_refreshCard() {
-      // [重新验证]按钮
-      this.info.show = false;
-      // 获取被点击对象以及被选中集合
-      let set = new Set(this.selectingInfo.cardSet);
-      set.add(this.targetCard);
-      // console.log(`待更新index列表:${indexList}`);
-      set.forEach((card) => {
-        this.$emit("requestToVerifyCard", card);
-      });
-    },
-    // 设为背景
-    rightClickMenu_setAsBackground() {
-      this.info.show = false;
-      // 发送背景设置请求
-      this.$emit("requestSetBackGround", this.targetCard, true);
-    },
-    rightClickMenu_deleteCard() {
-      // [删除]按钮
-      this.info.show = false;
-      // 获取被点击对象
-      // 获取被点击对象以及被选中集合
-      let set = new Set(this.selectingInfo.cardSet);
-      set.add(this.targetCard);
-      // console.log(`待更新index列表:${indexList}`);
-      let msg;
-      if (set.size > 1) {
-        msg = `确认删除"${this.targetCard.Content}"以及,已选中${this.selectingInfo.cardSet.size}的项 (共${set.size}项)`;
-      } else {
-        msg = `确认删除"${this.targetCard.Content} (共${1}项)"`;
-      }
-      if (confirm(msg)) {
-        set.forEach((card) => {
-          this.$emit("requestRemoveCard", card);
-        });
-      }
-    },
-  },
+			// 记录右键时点击的目标
+			this.targetCard = card;
+		},
+		closeMenu(e) {
+			if (!e.target.classList.contains("right-click-menu") && !e.target.classList.contains("menu-option")) {
+				this.info.show = false;
+			}
+		},
+		// 菜单按钮事件
+		rightClickMenu_viewTarget() {
+			// [预览]按钮
+			this.info.show = false;
+			this.$emit("requestToShow", this.targetCard.index);
+		},
+		rightClickMenu_openInNewTAB() {
+			// [新标签中打开]按钮
+			this.info.show = false;
+			window.open(this.targetCard.LinkUrl, "_blank");
+		},
+		rightClickMenu_renameCard() {
+			// [重命名]按钮
+			this.info.show = false;
+			let newName = prompt("新名称", this.targetCard.Content);
+			const reg = /^\s*$/g;
+			if (newName != null && !reg.test(newName)) {
+				this.targetCard.Content = newName;
+			}
+		},
+		rightClickMenu_refreshCard() {
+			// [重新验证]按钮
+			this.info.show = false;
+			// 获取被点击对象以及被选中集合
+			let set = new Set();
+			this.selectingInfo.cardSet.forEach((card) => {
+				set.add(card);
+			});
+			set.add(this.targetCard);
+			// console.log(`待更新index列表:${indexList}`);
+			set.forEach((card) => {
+				this.$emit("requestToVerifyCard", card);
+			});
+		},
+		// 设为背景
+		rightClickMenu_setAsBackground() {
+			this.info.show = false;
+			// 发送背景设置请求
+			this.$emit("requestSetBackGround", this.targetCard, true);
+		},
+		rightClickMenu_deleteCard() {
+			// [删除]按钮
+			this.info.show = false;
+			// 获取被点击对象
+			// 获取被点击对象以及被选中集合
+			let set = new Set();
+			this.selectingInfo.cardSet.forEach((card) => {
+				set.add(card);
+			});
+			set.add(this.targetCard);
+			// console.log(`待更新index列表:${indexList}`);
+			let msg;
+			if (set.size > 1) {
+				msg = `确认删除"${this.targetCard.Content}"以及,已选中${this.selectingInfo.cardSet.size}的项 (共${set.size}项)`;
+			} else {
+				msg = `确认删除"${this.targetCard.Content} (共${1}项)"`;
+			}
+			if (confirm(msg)) {
+				set.forEach((card) => {
+					this.$emit("requestRemoveCard", card);
+				});
+			}
+		},
+	},
 };
+// export {AppRightClickMenu};
 
 // 框选工具
 const AppAreaSelector = {
-  template: /*html*/ `
+	template: /*html*/ `
   <!-- 框选box -->
   <div id="areaSelector" ref="areaSelector"
   :style="{
@@ -1151,293 +1162,291 @@ const AppAreaSelector = {
     zIndex: '100',
   }"></div>
   `,
-  props: {
-    cardInfoList: Object, // 可选内容
-    selectingInfo: Object, // 选中信息
-    listDomSelector: String, // list的Dom对象选择器
-  },
-  data() {
-    return {
-      // [框选盒子信息]
-      mouseKey: 0, // 选区触发按键
-      startPoint: { x: 0, y: 0 }, // div选区的起始坐标(相对可选区域)
-      endPoint: { x: 0, y: 0 }, // div选区的结束坐标(相对可选区域)
-      ctrlKeyPressed: false, // 是否按下ctrl键
-      selectedSet: new Set(), // 记录被选结果Key的数组
-      tempSelectedSet: new Set(), // 缓存每次框选选中的元素，避免直接修改 selectedSet
-      lastTimeSelectedSet: new Set(), // 上一次选中的集合
-      syncSelectedSet: new Set(), // 同步数组
-      unselectedSet: new Set(), // 没有选中的集合
-      info: {
-        show: false,
-        top: 0,
-        left: 0,
-        width: 0,
-        height: 0,
-      },
-    };
-  },
-  methods: {
-    // [框选功能]
-    // 由相对视窗的坐标计算相对可选区域的坐标
-    getRelativePositionInElement(clientX, clientY) {
-      // 获取选区对象
-      const element = document.querySelector(this.listDomSelector);
-      // 获取可选区域的坐标对象
-      const rect = element.getBoundingClientRect();
-      // 通过WIndow对象提供的getComputedStyle() 获取可选区域的的 CSS 样式
-      let listStyle = window.getComputedStyle(element, null);
-      // 获取可选区域的border-top和border-left
-      const borderTop = parseFloat(listStyle.getPropertyValue("border-top"));
-      const borderLeft = parseFloat(listStyle.getPropertyValue("border-left"));
+	props: {
+		cardInfoList: Object, // 可选内容
+		selectingInfo: Object, // 选中信息
+		listDomSelector: String, // list的Dom对象选择器
+	},
+	data() {
+		return {
+			// [框选盒子信息]
+			mouseKey: 0, // 选区触发按键
+			startPoint: {x: 0, y: 0}, // div选区的起始坐标(相对可选区域)
+			endPoint: {x: 0, y: 0}, // div选区的结束坐标(相对可选区域)
+			ctrlKeyPressed: false, // 是否按下ctrl键
+			selectedSet: new Set(), // 记录被选结果Key的数组
+			tempSelectedSet: new Set(), // 缓存每次框选选中的元素，避免直接修改 selectedSet
+			lastTimeSelectedSet: new Set(), // 上一次选中的集合
+			syncSelectedSet: new Set(), // 同步数组
+			unselectedSet: new Set(), // 没有选中的集合
+			info: {
+				show: false,
+				top: 0,
+				left: 0,
+				width: 0,
+				height: 0,
+			},
+		};
+	},
+	methods: {
+		// [框选功能]
+		// 由相对视窗的坐标计算相对可选区域的坐标
+		getRelativePositionInElement(clientX, clientY) {
+			// 获取选区对象
+			const element = document.querySelector(this.listDomSelector);
+			// 获取可选区域的坐标对象
+			const rect = element.getBoundingClientRect();
+			// 通过WIndow对象提供的getComputedStyle() 获取可选区域的的 CSS 样式
+			let listStyle = window.getComputedStyle(element, null);
+			// 获取可选区域的border-top和border-left
+			const borderTop = parseFloat(listStyle.getPropertyValue("border-top"));
+			const borderLeft = parseFloat(listStyle.getPropertyValue("border-left"));
 
-      // 记录可选区域的left,top
-      const { left, top } = rect;
-      // 记录可选区域的内容区的left,top,width,height
-      const { scrollLeft, scrollTop, scrollWidth, scrollHeight } = element;
+			// 记录可选区域的left,top
+			const {left, top} = rect;
+			// 记录可选区域的内容区的left,top,width,height
+			const {scrollLeft, scrollTop, scrollWidth, scrollHeight} = element;
 
-      // 计算相对坐标
-      // let x = clientX - left + scrollLeft - borderLeft
-      // let y = clientY - top + scrollTop - borderTop
-      let x = clientX - left + scrollLeft - borderLeft;
-      let y = clientY - top + scrollTop - borderTop;
-      // let x = clientX - left + scrollLeft
-      // let y = clientY - top + scrollTop
-      // console.log({
-      //   scrollLeft,
-      //   scrollTop,
-      //   scrollWidth,
-      //   scrollHeight
-      // }, rect, window.event, { x, y });
+			// 计算相对坐标
+			// let x = clientX - left + scrollLeft - borderLeft
+			// let y = clientY - top + scrollTop - borderTop
+			let x = clientX - left + scrollLeft - borderLeft;
+			let y = clientY - top + scrollTop - borderTop;
+			// let x = clientX - left + scrollLeft
+			// let y = clientY - top + scrollTop
+			// console.log({
+			//   scrollLeft,
+			//   scrollTop,
+			//   scrollWidth,
+			//   scrollHeight
+			// }, rect, window.event, { x, y });
 
-      // 判断是否超出可选区域(防止超出区域)
-      if (x < 0) {
-        x = 0;
-      } else if (x > scrollWidth) {
-        x = scrollWidth;
-      }
-      if (y < 0) {
-        y = 0;
-      } else if (y > scrollHeight) {
-        y = scrollHeight;
-      }
+			// 判断是否超出可选区域(防止超出区域)
+			if (x < 0) {
+				x = 0;
+			} else if (x > scrollWidth) {
+				x = scrollWidth;
+			}
+			if (y < 0) {
+				y = 0;
+			} else if (y > scrollHeight) {
+				y = scrollHeight;
+			}
 
-      // 返回结果(去除小数部分保留整数,即只精确到像素)(节省资源开销)
-      return {
-        x: Math.round(x),
-        y: Math.round(y),
-      };
-    },
-    // 选区盒子的状态切换
-    switchShowArea(value) {
-      if (value === 0) {
-        // value=0隐藏
-        this.info.show = false;
-      }
-      if (value === 1) {
-        // value=1显示
-        this.info.show = true;
-      }
-    },
-    // 判断两个矩形区域是否有交集
-    twoRectsHaveIntersection(rect1, rect2) {
-      const left1 = rect1.left;
-      const left2 = rect2.left;
-      const right1 = rect1.left + rect1.width;
-      const right2 = rect2.left + rect2.width;
+			// 返回结果(去除小数部分保留整数,即只精确到像素)(节省资源开销)
+			return {
+				x: Math.round(x),
+				y: Math.round(y),
+			};
+		},
+		// 选区盒子的状态切换
+		switchShowArea(value) {
+			if (value === 0) {
+				// value=0隐藏
+				this.info.show = false;
+			}
+			if (value === 1) {
+				// value=1显示
+				this.info.show = true;
+			}
+		},
+		// 判断两个矩形区域是否有交集
+		twoRectsHaveIntersection(rect1, rect2) {
+			const left1 = rect1.left;
+			const left2 = rect2.left;
+			const right1 = rect1.left + rect1.width;
+			const right2 = rect2.left + rect2.width;
 
-      const top1 = rect1.top;
-      const top2 = rect2.top;
-      const bottom1 = rect1.top + rect1.height;
-      const bottom2 = rect2.top + rect2.height;
+			const top1 = rect1.top;
+			const top2 = rect2.top;
+			const bottom1 = rect1.top + rect1.height;
+			const bottom2 = rect2.top + rect2.height;
 
-      const width1 = rect1.width;
-      const width2 = rect2.width;
-      const height1 = rect1.height;
-      const height2 = rect2.height;
+			const width1 = rect1.width;
+			const width2 = rect2.width;
+			const height1 = rect1.height;
+			const height2 = rect2.height;
 
-      // 没有交集的情况
-      const noIntersection =
-        left2 > right1 ||
-        left1 > right2 ||
-        bottom1 < top2 ||
-        bottom2 < top1 ||
-        width1 <= 0 ||
-        width2 <= 0 ||
-        height1 <= 0 ||
-        height2 <= 0;
+			// 没有交集的情况
+			const noIntersection = left2 > right1 || left1 > right2 || bottom1 < top2 || bottom2 < top1 || width1 <= 0 || width2 <= 0 || height1 <= 0 || height2 <= 0;
 
-      return !noIntersection;
-    },
-    // 更新被选项目
-    updateSelectItems() {
-      // 获取选区div的坐标对象
-      const areaRect = this.$refs.areaSelector.getBoundingClientRect();
-      // 获取所有可选项
-      const items = document
-        .querySelector(this.listDomSelector)
-        .querySelectorAll(".card");
-      // console.log(items);
-      // 对每个可选项进行判断
-      items.forEach((item) => {
-        // 获取可选项的坐标对象
-        const itemRect = item.getBoundingClientRect();
-        // 获取Key
-        const index = Number(item.dataset.index);
-        // 获取对象的vue实例
-        const card = this.cardInfoList[index];
+			return !noIntersection;
+		},
+		// 更新被选项目
+		updateSelectItems() {
+			// 获取选区div的坐标对象
+			const areaRect = this.$refs.areaSelector.getBoundingClientRect();
+			// 获取所有可选项
+			const items = document.querySelector(this.listDomSelector).querySelectorAll(".card");
+			// console.log(items);
+			// 对每个可选项进行判断
+			items.forEach((item) => {
+				// 获取可选项的坐标对象
+				const itemRect = item.getBoundingClientRect();
+				// 获取Key
+				const index = Number(item.dataset.index);
+				// 获取对象的vue实例
+				const card = this.cardInfoList[index];
 
-        // 判断可选项与选区div是否有交集
-        const hasIntersection = this.twoRectsHaveIntersection(
-          areaRect,
-          itemRect
-        );
-        // 判断是否在上一次选中的结果中
-        const isHasInLastTimeSelected = this.lastTimeSelectedSet.has(card);
+				// 判断可选项与选区div是否有交集
+				const hasIntersection = this.twoRectsHaveIntersection(areaRect, itemRect);
+				// 判断是否在上一次选中的结果中
+				const isHasInLastTimeSelected = this.lastTimeSelectedSet.has(card);
 
-        if (!this.ctrlKeyPressed) {
-          // 没有按下ctrl
-          if (hasIntersection) {
-            // 与选区相交
-            this.selectingInfo.tempCardSet.add(card);
-          } else {
-            // 与选区没有相交
-            this.selectingInfo.tempCardSet.delete(card);
-          }
-        } else {
-          // 按下了ctrl
-          if (hasIntersection) {
-            // 与选区相交
-            if (isHasInLastTimeSelected) {
-              // 在上一次选中的结果中
-              this.selectingInfo.tempCardSet.delete(card);
-            } else {
-              // 不在上一次选中的结果中
-              this.selectingInfo.tempCardSet.add(card);
-            }
-          } else {
-            // 与选区没有相交
-            if (isHasInLastTimeSelected) {
-              // 在上一次选中的结果中
-              this.selectingInfo.tempCardSet.add(card);
-            } else {
-              // 不在上一次选中的结果中
-              this.selectingInfo.tempCardSet.delete(card);
-            }
-          }
-        }
-        [];
-      });
-      // console.log([...this.selectingInfo.tempCardSet].map(card => card.index));
-    },
-    // 选区盒子的信息获取
-    updateArea() {
-      // 计算div的top,left
-      const top = Math.min(this.startPoint.y, this.endPoint.y);
-      const left = Math.min(this.startPoint.x, this.endPoint.x);
-      // 计算div的width,height
-      const width = Math.abs(this.startPoint.x - this.endPoint.x);
-      const height = Math.abs(this.startPoint.y - this.endPoint.y);
-      // 设置选区div的top,left,width,height
-      this.info.top = top;
-      this.info.left = left;
-      this.info.width = width;
-      this.info.height = height;
+				if (!this.ctrlKeyPressed) {
+					// 没有按下ctrl
+					if (hasIntersection) {
+						// 与选区相交
+						this.selectingInfo.tempCardSet.add(card);
+					} else {
+						// 与选区没有相交
+						this.selectingInfo.tempCardSet.delete(card);
+					}
+				} else {
+					// 按下了ctrl
+					if (hasIntersection) {
+						// 与选区相交
+						if (isHasInLastTimeSelected) {
+							// 在上一次选中的结果中
+							this.selectingInfo.tempCardSet.delete(card);
+						} else {
+							// 不在上一次选中的结果中
+							this.selectingInfo.tempCardSet.add(card);
+						}
+					} else {
+						// 与选区没有相交
+						if (isHasInLastTimeSelected) {
+							// 在上一次选中的结果中
+							this.selectingInfo.tempCardSet.add(card);
+						} else {
+							// 不在上一次选中的结果中
+							this.selectingInfo.tempCardSet.delete(card);
+						}
+					}
+				}
+				[];
+			});
+			// console.log([...this.selectingInfo.tempCardSet].map(card => card.index));
+		},
+		// 选区盒子的信息获取
+		updateArea() {
+			// 计算div的top,left
+			const top = Math.min(this.startPoint.y, this.endPoint.y);
+			const left = Math.min(this.startPoint.x, this.endPoint.x);
+			// 计算div的width,height
+			const width = Math.abs(this.startPoint.x - this.endPoint.x);
+			const height = Math.abs(this.startPoint.y - this.endPoint.y);
+			// 设置选区div的top,left,width,height
+			this.info.top = top;
+			this.info.left = left;
+			this.info.width = width;
+			this.info.height = height;
 
-      // 更新被选项目
-      // this.updateSelectItems()
-    },
-    // 处理鼠标按下
-    handleMouseDown(e) {
-      // 获取选区对象
-      const element = document.querySelector(this.listDomSelector);
-      if (e.button != this.mouseKey || e.target != element) {
-        return;
-      }
-      // 为可选区域添加鼠标按下事件(此处e为鼠标)
-      const { clientX, clientY, ctrlKey } = e; //记录鼠标相对视窗的坐标和按下的按键
-      // 记录是否按下ctrl键
-      this.ctrlKeyPressed = ctrlKey;
-      // 初始化被选id列表(缓存)和反选id列表
-      // this.selectingInfo.tempCardSet = new Set(this.selectingInfo.cardSet)
-      if (ctrlKey) {
-        this.lastTimeSelectedSet = new Set(this.selectingInfo.cardSet);
-      } else {
-        this.selectingInfo.tempCardSet = new Set();
-      }
+			// 更新被选项目
+			// this.updateSelectItems()
+		},
+		// 处理鼠标按下
+		handleMouseDown(e) {
+			// 获取选区对象
+			const element = document.querySelector(this.listDomSelector);
+			if (e.button != this.mouseKey || e.target != element) {
+				return;
+			}
+			// 为可选区域添加鼠标按下事件(此处e为鼠标)
+			const {clientX, clientY, ctrlKey} = e; //记录鼠标相对视窗的坐标和按下的按键
+			// 记录是否按下ctrl键
+			this.ctrlKeyPressed = ctrlKey;
+			if (ctrlKey) {
+				this.lastTimeSelectedSet = new Set();
+				this.selectingInfo.cardSet.forEach((card) => {
+					this.lastTimeSelectedSet.add(card);
+				});
+			} else {
+				this.selectingInfo.tempCardSet = new Set();
+			}
 
-      // 计算鼠标的起始位置(相对可选区域)
-      this.startPoint = this.getRelativePositionInElement(clientX, clientY);
-      // 先让鼠标的结束位置等于起始位置(初始化)
-      this.endPoint = this.startPoint;
-      // 更新选区div
-      this.updateArea();
-      // this.updateSelectItems()
-      // 显示选区div
-      this.switchShowArea(1);
-      // 鼠标移动事件
-      // [调用]在windows上添加鼠标移动事件
-      window.addEventListener("mousemove", this.handleMouseMove);
-      // [调用]抬起事件注册
-      window.addEventListener("mouseup", this.handleMouseUp);
-    },
-    // 处理鼠标移动
-    handleMouseMove(e) {
-      const { clientX, clientY } = e; //记录鼠标相对视窗的坐标
-      // 更新鼠标的结束位置(相对于可选区域)
-      this.endPoint = this.getRelativePositionInElement(clientX, clientY);
-      // 更新选区div
-      this.updateArea();
-      // 更新被选项目
-      this.updateSelectItems();
-      // 用于滚动
-      this.scrollOnDrag(clientX, clientY);
-    },
-    // 处理鼠标抬起
-    handleMouseUp(e) {
-      if (e.button != this.mouseKey) {
-        return;
-      }
-      // 鼠标抬起后移除鼠标移动的监听事件
-      window.removeEventListener("mousemove", this.handleMouseMove);
-      // 鼠标抬起后移除鼠标移动的监听事件
-      window.removeEventListener("mouseup", this.handleMouseUp);
-      // 隐藏选区div
-      this.switchShowArea(0);
-      // 更新结果
-      this.selectingInfo.cardSet = new Set(this.selectingInfo.tempCardSet);
-    },
-    // 鼠标拖动过程中的可选区域滚动
-    scrollOnDrag(mouseX, mouseY) {
-      // 获取选区对象
-      const element = document.querySelector(this.listDomSelector);
-      const { x, y, width, height } = element.getBoundingClientRect();
-      // x,y方向的滚动值
-      let scrollX, scrollY;
+			// 计算鼠标的起始位置(相对可选区域)
+			this.startPoint = this.getRelativePositionInElement(clientX, clientY);
+			// 先让鼠标的结束位置等于起始位置(初始化)
+			this.endPoint = this.startPoint;
+			// 更新选区div
+			this.updateArea();
+			// this.updateSelectItems()
+			// 显示选区div
+			this.switchShowArea(1);
+			// 鼠标移动事件
+			// [调用]在windows上添加鼠标移动事件
+			window.addEventListener("mousemove", this.handleMouseMove);
+			// [调用]抬起事件注册
+			window.addEventListener("mouseup", this.handleMouseUp);
+		},
+		// 处理鼠标移动
+		handleMouseMove(e) {
+			const {clientX, clientY} = e; //记录鼠标相对视窗的坐标
+			// 更新鼠标的结束位置(相对于可选区域)
+			this.endPoint = this.getRelativePositionInElement(clientX, clientY);
+			// 更新选区div
+			this.updateArea();
+			// 更新被选项目
+			this.updateSelectItems();
+			// 用于滚动
+			this.scrollOnDrag(clientX, clientY);
+		},
+		// 处理鼠标抬起
+		handleMouseUp(e) {
+			if (e.button != this.mouseKey) {
+				return;
+			}
+			// 鼠标抬起后移除鼠标移动的监听事件
+			window.removeEventListener("mousemove", this.handleMouseMove);
+			// 鼠标抬起后移除鼠标移动的监听事件
+			window.removeEventListener("mouseup", this.handleMouseUp);
+			// 隐藏选区div
+			this.switchShowArea(0);
+			// 更新结果
+			this.selectingInfo.cardSet = new Set();
+			this.selectingInfo.tempCardSet.forEach((card) => {
+				this.selectingInfo.cardSet.add(card);
+			});
+		},
+		// 鼠标拖动过程中的可选区域滚动
+		scrollOnDrag(mouseX, mouseY) {
+			// 获取选区对象
+			const element = document.querySelector(this.listDomSelector);
+			const {x, y, width, height} = element.getBoundingClientRect();
+			// x,y方向的滚动值
+			let scrollX, scrollY;
 
-      if (mouseX < x) {
-        scrollX = mouseX - x;
-      } else if (mouseX > x + width) {
-        scrollX = mouseX - (x + width);
-      }
-      if (mouseY < y) {
-        scrollY = mouseY - y;
-      } else if (mouseY > y + height) {
-        scrollY = mouseY - (y + height);
-      }
+			if (mouseX < x) {
+				scrollX = mouseX - x;
+			} else if (mouseX > x + width) {
+				scrollX = mouseX - (x + width);
+			}
+			if (mouseY < y) {
+				scrollY = mouseY - y;
+			} else if (mouseY > y + height) {
+				scrollY = mouseY - (y + height);
+			}
 
-      if (scrollX || scrollY) {
-        // 滚动可选区域(将页面滚动至 相对于当前位置的 (scrollX,scrollY)位置)
-        element.scrollBy({
-          left: scrollX,
-          top: scrollY,
-          behavior: "auto",
-        });
-      }
-    },
-  },
+			if (scrollX || scrollY) {
+				// 滚动可选区域(将页面滚动至 相对于当前位置的 (scrollX,scrollY)位置)
+				element.scrollBy({
+					left: scrollX,
+					top: scrollY,
+					behavior: "auto",
+				});
+			}
+		},
+	},
 };
+// export {AppAreaSelector};
 
+// import { AppCard } from "./App_Card.js";
+// import { AppPreViewer } from "./App_PreViewer.js";
+// import { AppSearchBox } from "./App_SearchBox.js";
+// import { AppRightClickMenu } from "./App_RightClickMenu.js";
+// import { AppAreaSelector } from "./App_AreaSelector.js";
+// import { config } from "../config.js";
 // ?list的定义
 const AppList = {
 	components: {
@@ -1514,7 +1523,7 @@ const AppList = {
   ></app-pre-viewer>
 
     <!-- 搜索框 -->
-  <app-search-box 
+  <app-search-box ref="searchBox"
     :cardInfoList="cardInfoList"
     @returnMatchInfo="(value)=>{searchInfo = value}"
   ></app-search-box>
@@ -1553,7 +1562,7 @@ const AppList = {
 				loadingQueueList: [], //* 动态加载队列
 				visibleCardSet: new Set(),
 				loadedCardSet: new Set(),
-				unloadedCardSet: new Set(this.cardInfoList),
+				unloadedCardSet: new Set(),
 				visibleIndexListInMatched: [],
 				unloadedIndexListInMatched: [],
 			}, // ?列表信息
@@ -1737,7 +1746,7 @@ const AppList = {
 							};
 						}
 					}
-				}else{
+				} else {
 					const err = {
 						// ?返回一个对象：记录原始宽高以及宽高比
 						state: "error",
@@ -1976,10 +1985,11 @@ const AppList = {
 						this.verifyMultipleCard(listIndex, false);
 					}
 				} else {
+					let listIndex = [];
 					//* 预览图片模式
 					let realIndex = matchIndexList.indexOf(this.preViewIndex);
-					startIndex = realIndex - this.onceLoadMaxCount;
-					endIndex = realIndex + this.onceLoadMaxCount;
+					let startIndex = realIndex - this.onceLoadMaxCount;
+					let endIndex = realIndex + this.onceLoadMaxCount;
 					listIndex = this.getUnloadingIndexList({
 						inputIndexList: this.listInfo.unloadedIndexListInMatched,
 						limitedIndexList: Array.from(this.searchInfo.matchCardSet).map((card) => card.index),
@@ -2031,9 +2041,11 @@ const AppList = {
 					(res) => {
 						// ?[获取成功]
 						// ?使用返回结果设置
-						card.Width = res.width;
-						card.Height = res.height;
-						card.scale = res.width / res.height;
+						if (card.Width < res.width && card.Height < res.height) {
+							card.Width = res.width;
+							card.Height = res.height;
+							card.scale = res.width / res.height;
+						}
 						// ?标记为metaInfo有效
 						card.metaInfoAvailable = true;
 					},
@@ -2098,6 +2110,9 @@ const AppList = {
 		//f [card]发送卡片点击事件
 		cardClickEvent(card) {
 			const e = window.event;
+			if (e.target.tagName == "A") {
+				return;
+			}
 			// 判断左右
 			if (e.button == 0) {
 				// 左键
@@ -2117,6 +2132,9 @@ const AppList = {
 		//f 发送卡片双击事件
 		cardDblclickEvent(card) {
 			const e = window.event;
+			if (e.target.tagName == "A") {
+				return;
+			}
 			if (e.target.tagName != "A") {
 				// 向父组件发送toShow请求切换请求
 				this.$refs.preViewer.toShow(card.index);
@@ -2279,12 +2297,22 @@ const AppList = {
 			};
 		},
 	},
+	watch: {
+		cardInfoList(newVal, oldVal) {
+			this.listInfo.loadedCardSet = new Set(); //* 已加载集合置空
+			this.listInfo.unloadedCardSet = new Set(); //* 更新list中的未加载集合
+			this.cardInfoList.forEach((card) => {
+				this.listInfo.unloadedCardSet.add(card);
+			});
+		},
+	},
 	directives: {},
 	mounted() {
 		//f 先给指定数量(onceLoadMaxCount)的card进行有效性验证
 		this.pollingLoading();
 		this.loadingQueue();
 	},
+	updated() {},
 	beforeMount() {},
 	created() {
 		// ?给每张卡片初化始信息
@@ -2294,141 +2322,214 @@ const AppList = {
 		// console.log(this.cardInfoList);
 	},
 };
+// export { AppList };
 
+// import { config } from "../config.js";
 // 背景板的定义
 const AppBackGroundBoard = {
-  template:/*html*/`
+	template: /*html*/ `
   <div id="backGroundBoard" ref="backGroundBoard"
     :data-show-type="info.showType"
-    :style="{
-      'background-image':'url('+ info.imgUrl +')',
-    }"
     @mousewheel="wheelInViewer"
   >
-    <!-- 图片类背景用backGroundBoard容器自身显示 -->
+    <!-- 图片类背景 -->
+		<div id="backgroundImg" ref="backgroundImg"
+			:data-show="info.show&&info.imgUrl!=''"
+			:style="{
+				'background-image':'url('+ info.imgUrl +')',
+			}"
+		></div>
     <!-- 视频类背景 -->
     <video id="backgroundVideo" ref="backgroundVideo" controls loop="loop" autoplay="true"
+		:data-show="info.show&&info.videoUrl!=''"
     :src="info.videoUrl"
     ></video>
   </div>
   `,
-  props: {
-    regex: Object,// 正则表达式
-  },
-  data() {
-    return {
-      info: {
-        nsfw: false,
-        showType: 'none',
-        imgUrl: '',
-        videoUrl: '',
-      }
-    }
-  },
-  methods: {
-    // 更改body的背景(bodyDom操作)
-    alterBackground(url) {
-      let isOK = false
-      // 判断url类型
-      if (this.regex.isImg.test(url)) {
-        this.info.imgUrl = `'${url}'`
-        this.info.videoUrl = ''
-        this.info.showType = 'img'
-        isOK = true
-      } else if (this.regex.isVideo.test(url)) {
-        this.info.videoUrl = url
-        this.info.imgUrl = ''
-        this.info.showType = 'video'
-        isOK = true
-      } else {
-        this.info.showType = 'none'
-      }
-      return isOK
-    },
-    // 鼠标滚动事件
-    wheelInViewer(e) {
-      // console.log(e);
-      if (e.target.id == 'backgroundVideo') {
-        if (e.wheelDelta > 0) {
-          this.videoPlayerControl('volup')
-        } else {
-          this.videoPlayerControl('voldown')
-        }
-      }
-    },
-    // [视频播放器控制]
-    videoPlayerControl(command, option) {
-      // 获取视频播放器dom
-      const videoEle = this.$refs.backgroundVideo
-      videoEle.blur()
-      const vol = 0.1 // 1代表100%音量，每次增减0.1
-      const timeConst = 5 // 通常增量单位秒
-      let time = timeConst
-      if (option != undefined) {
-        time = option
-      }
-      // [进度条控制]
-      if (command == 'toback') {
-        if (videoEle.currentTime - time > 0) {
-          videoEle.currentTime = videoEle.currentTime - time
-        } else {
-          videoEle.currentTime = 0
-        }
-      }
-      if (command == 'toforward') {
-        if (videoEle.currentTime + time < videoEle.duration) {
-          videoEle.currentTime = videoEle.currentTime + time
-        } else {
-          videoEle.currentTime = videoEle.duration
-        }
-      }
-      // [音量控制]
-      if (command == 'voldown') videoEle.volume =
-        videoEle.volume - vol >= 0 ? videoEle.volume - vol : 0
-      if (command == 'volup') videoEle.volume =
-        videoEle.volume + vol <= 1 ? videoEle.volume + vol : 1
-      if (command == 'mute') {
-        if (videoEle.muted) {
-          videoEle.muted = false
-        } else {
-          videoEle.muted = true
-        }
-      }
-      // [播放控制]
-      if (command == 'pause') videoEle.pause()
-      if (command == 'play') videoEle.play()
-      if (command == 'switch') {
-        if (videoEle.paused) {
-          videoEle.play()
-        } else {
-          videoEle.pause()
-        }
-      }
+	props: {
+		cardInfoList: Object,
+		regex: Object, // 正则表达式
+	},
+	data() {
+		return {
+			info: {
+				nsfw: false,
+				show: false,
+				showType: "none",
+				imgUrl: "",
+				videoUrl: "",
+			},
+		};
+	},
+	methods: {
+		//f 初始化背景
+		async initialBackground() {
+			if (config.initialBackgroundIndexByCard >= 0) {
+				let url = this.cardInfoList[config.initialBackgroundIndexByCard].LinkUrl
+				let isOK = await this.alterBackground(url)
+				if (!isOK) {
+					url = this.cardInfoList[config.initialBackgroundIndexByCard].PicUrl
+					await this.alterBackground(url)
+				}
+			} else {
+				for (let i = 0; i < this.cardInfoList.length; i++) {
+					if (this.info.showType != "none") {
+						break;
+					}
+					const card = this.cardInfoList[i];
+					let url = card.LinkUrl;
+					let isOK = await this.alterBackground(url)
+					if (!isOK) {
+						url = card.PicUrl;
+						await this.alterBackground(url);
+					}
+				}
+			}
+		},
+		// 更改body的背景(bodyDom操作)
+		async alterBackground(url) {
+			let isOK = false;
+			let promiseListTemp = []//* 请求列表
+			//* 记录旧数据
+			let old = {
+				showType: 'none',
+				imgUrl: '',
+				videoUrl: '',
+			}
+			if (this.info.showType == 'img') {
+				old.showType = 'img'
+				old.imgUrl = this.info.imgUrl
+			} else if (this.info.showType == 'video') {
+				old.showType = 'video'
+				old.videoUrl = this.info.videoUrl
+			}
+			this.info.show = false
+			//* 判断url类型并尝试更换
+			if (this.regex.isImg.test(url)) {
+				this.info.imgUrl = `'${url}'`;
+				this.info.videoUrl = "";
+				this.info.showType = "img";
+				let p = new Promise((resolve, reject) => {
+					let img = new Image()
+					img.src = url
+					if (img.complete) {
+						resolve(true)
+						img = null
+					} else {
+						img.onload = () => {
+							img = null
+							resolve(true)
+						}
+						img.onerror = () => {
+							img = null
+							reject(false)
+						}
+					}
+				})
+				promiseListTemp.push(p)
+				isOK = await p
+			} else if (this.regex.isVideo.test(url)) {
+				this.info.videoUrl = url;
+				this.info.imgUrl = "";
+				this.info.showType = "video";
+				const videoEle = this.$refs.backgroundVideo
+				let p = new Promise((resolve, reject) => {
+					videoEle.oncanplay = () => {
+						resolve(true)
+					}
+					videoEle.onerror = () => {
+						reject(false)
+					}
+					// console.log(videoEle.error);
+				})
+				promiseListTemp.push(p)
+				isOK = await p
+			} else {
+				this.info.showType = "none";
+			}
 
-    },
-  },
-  created() {
-    // 挂载首张背景图
-    if (config.initialBackgroundIndexByCard >= 0) {
-      this.alterBackground(cardInfoList[config.initialBackgroundIndexByCard].PicUrl)
-    } else {
-      for (let i = 0; i < cardInfoList.length; i++) {
-        if (this.info.showType != 'none') {
-          break
-        }
-        const card = cardInfoList[i];
-        let url = card.PicUrl
-        if (!this.alterBackground(url)) {
-          url = card.LinkUrl
-          this.alterBackground(url)
-        }
-      }
-    }
-  },
-}
+			if (!isOK) {
+				//* 失败则还原数据
+				this.info.showType = old.showType
+				this.info.imgUrl = old.imgUrl
+				this.info.videoUrl = old.videoUrl
+			}
+			this.info.show = true
+			return isOK
+
+		},
+		// 鼠标滚动事件
+		wheelInViewer(e) {
+			// console.log(e);
+			if (e.target.id == "backgroundVideo") {
+				if (e.wheelDelta > 0) {
+					this.videoPlayerControl("volup");
+				} else {
+					this.videoPlayerControl("voldown");
+				}
+			}
+		},
+		// [视频播放器控制]
+		videoPlayerControl(command, option) {
+			// 获取视频播放器dom
+			const videoEle = this.$refs.backgroundVideo;
+			videoEle.blur();
+			const vol = 0.1; // 1代表100%音量，每次增减0.1
+			const timeConst = 5; // 通常增量单位秒
+			let time = timeConst;
+			if (option != undefined) {
+				time = option;
+			}
+			// [进度条控制]
+			if (command == "toback") {
+				if (videoEle.currentTime - time > 0) {
+					videoEle.currentTime = videoEle.currentTime - time;
+				} else {
+					videoEle.currentTime = 0;
+				}
+			}
+			if (command == "toforward") {
+				if (videoEle.currentTime + time < videoEle.duration) {
+					videoEle.currentTime = videoEle.currentTime + time;
+				} else {
+					videoEle.currentTime = videoEle.duration;
+				}
+			}
+			// [音量控制]
+			if (command == "voldown") videoEle.volume = videoEle.volume - vol >= 0 ? videoEle.volume - vol : 0;
+			if (command == "volup") videoEle.volume = videoEle.volume + vol <= 1 ? videoEle.volume + vol : 1;
+			if (command == "mute") {
+				if (videoEle.muted) {
+					videoEle.muted = false;
+				} else {
+					videoEle.muted = true;
+				}
+			}
+			// [播放控制]
+			if (command == "pause") videoEle.pause();
+			if (command == "play") videoEle.play();
+			if (command == "switch") {
+				if (videoEle.paused) {
+					videoEle.play();
+				} else {
+					videoEle.pause();
+				}
+			}
+		},
+	},
+	watch: {
+		cardInfoList(newVal, oldVal) {
+			// console.log('更新');
+			this.initialBackground()
+		},
+	},
+	created() { },
+};
+// export { AppBackGroundBoard };
+
 // zoomBar的定义
 const AppZoomBar = {
-  template:/*html*/`
+	template: /*html*/ `
     <div id="zoomBar" data-show="true" 
     @contextmenu.prevent.native="(e)=>{e.preventDefault()}">
       <input type="range" class="range" min="0" max="100.1" 
@@ -2437,64 +2538,65 @@ const AppZoomBar = {
       >
     </div>
   `,
-  props: {
-    maxColumn: Number,
-  },
-  data() {
-    return {
-      nowColumnInner: 0,
-    }
-  },
-  methods: {
-    // 鼠标滚轮更改缩放条数值
-    wheel(e) {
+	props: {
+		maxColumn: Number,
+	},
+	data() {
+		return {
+			nowColumnInner: 0,
+		};
+	},
+	methods: {
+		// 鼠标滚轮更改缩放条数值
+		wheel(e) {
+			// 获取当前列数
+			let nowColumn = Math.round((this.value / 100) * this.maxColumn);
+			if (e.wheelDelta > 0) {
+				nowColumn--;
+			} else {
+				nowColumn++;
+			}
+			// 布局判断
+			if (nowColumn > 0) {
+				if (nowColumn <= this.maxColumn) {
+					// 如果nowColumn>0&&nowColumn<=最大行数则正常赋值
+					this.nowColumn = nowColumn;
+				}
+			} else {
+				// 如果nowColumn<=0则变换布局
+				this.nowColumn = 0;
 
-      // 获取当前列数
-      let nowColumn = Math.round(this.value / 100 * this.maxColumn)
-      if (e.wheelDelta > 0) {
-        nowColumn--
-      } else {
-        nowColumn++
-      }
-      // 布局判断
-      if (nowColumn > 0) {
-        if (nowColumn <= this.maxColumn) {
-          // 如果nowColumn>0&&nowColumn<=最大行数则正常赋值
-          this.nowColumn = nowColumn
-        }
-      } else {
-        // 如果nowColumn<=0则变换布局
-        this.nowColumn = 0
-
-        // …………(待续)
-      }
-      // 更新参数
-      this.value = 100 * (this.nowColumn / this.maxColumn)
-    }
-  },
-  watch: {
-    'nowColumnInner'(newVal, oldVal) {
-      // 行显示信息发送变化时向父组件发送新数据
-      this.$emit('returnNowColumn', this.nowColumnInner)
-    }
-  },
-  computed: {
-    value: {
-      get() {
-        return (this.nowColumnInner / this.maxColumn) * 100
-      },
-      set(value) {
-        this.nowColumnInner = Math.round((value / 100) * this.maxColumn)
-      }
-    },
-  },
-  mounted() {
-    this.nowColumnInner = Math.round(this.maxColumn / 2)
-  },
-}
+				// …………(待续)
+			}
+			// 更新参数
+			this.value = 100 * (this.nowColumn / this.maxColumn);
+		},
+	},
+	watch: {
+		nowColumnInner(newVal, oldVal) {
+			// 行显示信息发送变化时向父组件发送新数据
+			this.$emit("returnNowColumn", this.nowColumnInner);
+		},
+	},
+	computed: {
+		value: {
+			get() {
+				return (this.nowColumnInner / this.maxColumn) * 100;
+			},
+			set(value) {
+				this.nowColumnInner = Math.round((value / 100) * this.maxColumn);
+			},
+		},
+	},
+	mounted() {
+		this.nowColumnInner = Math.round(this.maxColumn / 2);
+	},
+};
+// export {AppZoomBar};
+// import {config} from "../config.js";
 // 导航栏定义
 const AppNavBar = {
-  template:/*html*/`
+	template: /*html*/ `
   <div id="navBarBox" @contextmenu.prevent.native="(e)=>{e.preventDefault()}">
     <div id="navBarBody">
       <!-- 导航栏折叠框 -->
@@ -2607,106 +2709,97 @@ const AppNavBar = {
     
   </div>
   `,
-  props: {
-    onceLoadMaxCount: Number,
-    loadingState: Object,
-    selectingInfo: Object,
-  },
-  emits: [
-    'returnBtnInfo',
-    'returnOnceLoadingMax',
-    'downloadRequest',
-    'reVerifyAllCard',
-    'toNormalMode',
-    'allSelectRequest',
-    'cleanSelectionRequest',
-    'loadingRemainingRequest',
-  ],
-  computed: {
-    getPercentage() {
-      if (this.loadingState.nowCount == 0 || this.loadingState.allCount == 0) {
-        return `0%`
-      } else {
-        return `${(this.loadingState.nowCount / this.loadingState.allCount) * 100}%`
-      }
+	props: {
+		onceLoadMaxCount: Number,
+		loadingState: Object,
+		selectingInfo: Object,
+	},
+	emits: ["returnBtnInfo", "returnOnceLoadingMax", "downloadRequest", "reVerifyAllCard", "toNormalMode", "allSelectRequest", "cleanSelectionRequest", "loadingRemainingRequest"],
+	computed: {
+		getPercentage() {
+			if (this.loadingState.nowCount == 0 || this.loadingState.allCount == 0) {
+				return `0%`;
+			} else {
+				return `${(this.loadingState.nowCount / this.loadingState.allCount) * 100}%`;
+			}
+		},
+		getOnceLoadingMax: {
+			get() {
+				return this.onceLoadMaxCount;
+			},
+			set(value) {
+				this.$emit("returnOnceLoadingMax", value);
+			},
+		},
+	},
+	data() {
+		return {
+			unfold: true,
+			info: {
+				openQuickerInteraction: config.openQuickerInteraction,
+			},
+			btn: {
+				slowLoading: false, // 缓慢加载切换按钮
+				NSFWMode: config.initNSFWState, // NSFW模式切换按钮
+				cardTitleShow: config.initCardTitleState, // 卡片标题显示切换按钮
+				enableSwitchBackGround: config.initClickSwBackgroundState, // "运行背景切换"切换按钮
+				openScrollSnap: config.initOpenScrollSnap, // 滚动吸附切换按钮
+				listPageShow: true, // 画廊显示切换按钮
+			},
+		};
+	},
+	watch: {
+		btn: {
+			handler(newVal, oldVal) {
+				// console.log(newVal);
+				this.$emit("returnBtnInfo", {
+					slowLoading: newVal.slowLoading,
+					enableSwitchBackGround: newVal.enableSwitchBackGround,
+					openScrollSnap: newVal.openScrollSnap,
+				});
+			},
+			deep: true, //深度监听
+		},
+	},
+	methods: {
+		// 向父组件发送"下载"请求
+		sendDownloadRequest() {
+			this.$emit("downloadRequest");
+		},
+		// 向父组件发送"切换普通模式"请求
+		sendToNormalModeRequest() {
+			this.$emit("toNormalMode");
+		},
+		// 向父组件发送"全部重新验证"请求
+		sendReVerifyAllCardRequest() {
+			this.$emit("reVerifyAllCard");
+		},
+		// 向父组件发送"全选"请求
+		sendAllSelectRequest(value) {
+			this.$emit("allSelectRequest", value);
+		},
+		// 向父组件发送"清空选择"请求
+		sendCleanSelectionRequest() {
+			this.$emit("cleanSelectionRequest");
+		},
+		// 向父组件发送"记住剩余项"请求
+		sendLoadingRemainingRequest() {
+			this.$emit("loadingRemainingRequest");
+		},
+	},
+	created() {
+		this.$emit("returnBtnInfo", {
+			slowLoading: this.btn.slowLoading,
+			enableSwitchBackGround: this.btn.enableSwitchBackGround,
+			openScrollSnap: this.btn.openScrollSnap,
+		});
+	},
+};
+// export {AppNavBar};
 
-    },
-    getOnceLoadingMax: {
-      get() {
-        return this.onceLoadMaxCount
-      },
-      set(value) {
-        this.$emit('returnOnceLoadingMax', value)
-      }
-    },
-  },
-  data() {
-    return {
-      unfold: true,
-      info: {
-        openQuickerInteraction: config.openQuickerInteraction,
-      },
-      btn: {
-        slowLoading: false,// 缓慢加载切换按钮
-        NSFWMode: config.initNSFWState,// NSFW模式切换按钮
-        cardTitleShow: config.initCardTitleState,// 卡片标题显示切换按钮
-        enableSwitchBackGround:
-          config.initClickSwBackgroundState, // "运行背景切换"切换按钮
-        openScrollSnap: config.initOpenScrollSnap,// 滚动吸附切换按钮
-        listPageShow: true,// 画廊显示切换按钮
-      }
-    }
-  },
-  watch: {
-    btn: {
-      handler(newVal, oldVal) {
-        // console.log(newVal);
-        this.$emit('returnBtnInfo', {
-          slowLoading: newVal.slowLoading,
-          enableSwitchBackGround: newVal.enableSwitchBackGround,
-          openScrollSnap: newVal.openScrollSnap,
-        })
-      },
-      deep: true //深度监听
-    }
-  },
-  methods: {
-    // 向父组件发送"下载"请求
-    sendDownloadRequest() {
-      this.$emit('downloadRequest')
-    },
-    // 向父组件发送"切换普通模式"请求
-    sendToNormalModeRequest() {
-      this.$emit('toNormalMode')
-    },
-    // 向父组件发送"全部重新验证"请求
-    sendReVerifyAllCardRequest() {
-      this.$emit('reVerifyAllCard')
-    },
-    // 向父组件发送"全选"请求
-    sendAllSelectRequest(value) {
-      this.$emit('allSelectRequest', value)
-    },
-    // 向父组件发送"清空选择"请求
-    sendCleanSelectionRequest() {
-      this.$emit('cleanSelectionRequest')
-    },
-    // 向父组件发送"记住剩余项"请求
-    sendLoadingRemainingRequest() {
-      this.$emit('loadingRemainingRequest')
-    },
-  },
-  created() {
-    this.$emit('returnBtnInfo', {
-      slowLoading: this.btn.slowLoading,
-      enableSwitchBackGround: this.btn.enableSwitchBackGround,
-      openScrollSnap: this.btn.openScrollSnap,
-    })
-  },
-}
 // 标题栏定义
 const AppHeaderBar = {
-  template:/*html*/`
+	template: /*html*/ `
   <div class="header">
     <!-- 标题拖拽块 -->
     <div class="titleDragBlock"
@@ -2730,44 +2823,52 @@ const AppHeaderBar = {
     
   </div>
   `,
-  props: {
-    title: {
-      type: String,
-      default: '图库',
-    },
-    nowCount: Number,
-    allCount: Number,
-  },
-  data() {
-    return {
-      loaded: false, // 加载完成情况
-    }
-  },
-  watch: {
-    nowCount(newVal, oldVal) {
-      if (newVal >= this.allCount) {
-        setTimeout(() => {
-          this.loaded = true
-        }, 2000)
-      }
-    }
-  },
-  computed: {
-    // 百分比获取
-    percentage() {
-      if (this.nowCount == 0 || this.allCount == 0) {
-        return `0%`
-      } else {
-        return `${(this.nowCount / this.allCount) * 100}%`
-      }
-    }
-  },
-  methods: {
-    closeWindow() {
-      window.close()
-    }
-  },
-}
+	props: {
+		title: {
+			type: String,
+			default: "图库",
+		},
+		nowCount: Number,
+		allCount: Number,
+	},
+	data() {
+		return {
+			loaded: false, // 加载完成情况
+		};
+	},
+	watch: {
+		nowCount(newVal, oldVal) {
+			if (newVal >= this.allCount) {
+				setTimeout(() => {
+					this.loaded = true;
+				}, 2000);
+			}
+		},
+	},
+	computed: {
+		// 百分比获取
+		percentage() {
+			if (this.nowCount == 0 || this.allCount == 0) {
+				return `0%`;
+			} else {
+				return `${(this.nowCount / this.allCount) * 100}%`;
+			}
+		},
+	},
+	methods: {
+		closeWindow() {
+			window.close();
+		},
+	},
+};
+// export {AppHeaderBar};
+
+// import {AppList} from "./App_List.js";
+// import {AppBackGroundBoard} from "./App_BackGroundBoard.js";
+// import {AppZoomBar} from "./App_ZoomBar.js";
+// import {AppNavBar} from "./App_NavBar.js";
+// import {AppHeaderBar} from "./App_HeaderBar.js";
+// import {config} from "../config.js";
 //listPage的定义
 const AppListPage = {
 	// 导入组件
@@ -2782,6 +2883,7 @@ const AppListPage = {
 	template: /*html*/ `
   <!-- 背景板 -->
   <app-back-ground-board ref="backGroundBoard"
+		:cardInfoList="cardInfoList"
     :regex="regex"
   ></app-back-ground-board>
   <!-- 页面头部 -->
@@ -2838,8 +2940,8 @@ const AppListPage = {
 		return {
 			title: config.title,
 			openDragBlock: true,
-			cardInfoList: cardInfoList, // 卡片信息
-			cardInfoListBackup: Array.from(cardInfoList), // 卡片信息备份
+			cardInfoList: [], // 卡片信息
+			cardInfoListBackup: [], // 卡片信息备份
 			cardDefaultaspectRatio: 9 / 16, // 卡片预设宽高比
 			listInfo: {
 				loadingQueueList: [], //* 加载队列
@@ -2873,6 +2975,12 @@ const AppListPage = {
 		};
 	},
 	methods: {
+		//f 初始化
+		initialization() {
+			this.cardInfoListBackup = Array.from(this.cardInfoList); //* 更新备份
+			//? 给每张卡片初化始信息
+			this.initial_addGeneralAttributesForAllCards();
+		},
 		//? 给所有卡片添加通用属性
 		initial_addGeneralAttributesForAllCards() {
 			this.cardInfoList.forEach((card, i) => {
@@ -2998,22 +3106,20 @@ const AppListPage = {
 		},
 	},
 	computed: {
-		// 给list组件传递的数据
-		giveInfoToList() {
-			return {
-				cardInfoList: this.cardInfoList,
-			};
-		},
-	},
-	directives: {
 		
 	},
+	watch: {
+		cardInfoList(newVal, oldVal) {
+			this.cardInfoListBackup = Array.from(this.cardInfoList); //* 更新备份
+			this.initial_addGeneralAttributesForAllCards();
+		},
+	},
+	directives: {},
+	updated() {},
 	mounted() {
-		this.intiOK = true;
+		this.initialization(); //* 初始化调用
 	},
 	//? 创建时进行处理
-	created() {
-		//? 给每张卡片初化始信息
-		this.initial_addGeneralAttributesForAllCards();
-	},
+	created() {},
 };
+// export {AppListPage};

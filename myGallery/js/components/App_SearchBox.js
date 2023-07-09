@@ -18,7 +18,7 @@ const AppSearchBox = {
   </div> 
   `,
 	props: {
-		cardInfoList: Array,
+		cardInfoList: Object,
 	},
 	emits: ["returnMatchInfo"],
 	data() {
@@ -32,9 +32,10 @@ const AppSearchBox = {
 	},
 	methods: {
 		//f 触发搜索事件
-		sendSearchResult() {
+		async sendSearchResult() {
 			// 获取结果并更新标记
-			this.getMatchIndexList(this.matchTags);
+			await this.getMatchIndexList(this.matchTags);
+			// console.log(this.cardInfoList,this.matchCardSet);
 			// 并发送新结果给父组件
 			this.$emit("returnMatchInfo", {
 				matchTags: this.matchTags,
@@ -42,7 +43,7 @@ const AppSearchBox = {
 			});
 		},
 		//f 获取匹配信息
-		getMatchIndexList(matchTags = []) {
+		async getMatchIndexList(matchTags = []) {
 			this.cardInfoList.forEach((card) => {
 				let isMatch = false;
 				if (matchTags.length > 0) {
@@ -64,10 +65,13 @@ const AppSearchBox = {
 			});
 		},
 		//f 清空
-		clean() {
+		async clean() {
 			this.content = "";
 			this.matchCount = 0;
-			this.matchCardSet = new Set(this.cardInfoList);
+			this.matchCardSet = new Set();
+			this.cardInfoList.forEach((card) => {
+				this.matchCardSet.add(card);
+			});
 			this.$emit("returnMatchInfo", {
 				matchTags: this.matchTags,
 				matchCardSet: this.matchCardSet,
@@ -94,9 +98,9 @@ const AppSearchBox = {
 		},
 	},
 	watch: {
-    //f 监视cardInfoList变化
-    cardInfoList(newVal, oldVal){
-			this.clean()
+		//f 监视cardInfoList变化
+		cardInfoList(newVal, oldVal) {
+			this.clean();
 		},
 		//f 监视content变化(实时获取匹配结果)
 		content(newVal, oldVal) {

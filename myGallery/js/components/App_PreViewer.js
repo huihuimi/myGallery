@@ -1,3 +1,4 @@
+// import { AppThumbBox } from "./App_ThumbBox.js";
 // viewer的定义
 const AppPreViewer = {
 	components: {AppThumbBox},
@@ -12,7 +13,8 @@ const AppPreViewer = {
 
     <span id="messageInViewer" v-cloak>
       ({{Number(info.nowIndex)+1}}/{{cardInfoList.length}})<br>
-      {{message.content}}
+      {{getMessage.name}}<br>
+			{{getMessage.width}}x{{getMessage.height}}
     </span>
 
     <!-- 悬浮按钮菜单 -->
@@ -54,12 +56,6 @@ const AppPreViewer = {
       }" 
       @mousedown="mousedownViewer" 
       @mousewheel.passive="zoomViewer">
-
-        <!-- 内容区img -->
-        <!-- <img id="showPic" alt="" ref="showPic"
-				data-show="false"
-        :src="info.picShowBoardUrl"
-				> -->
 
       </div>
 
@@ -169,9 +165,6 @@ const AppPreViewer = {
 			btn: {
 				openThumbTrackBtn: false,
 			},
-			message: {
-				content: "",
-			},
 			thumbnailViewport: {
 				height: 150,
 				style: {
@@ -183,7 +176,7 @@ const AppPreViewer = {
 	// 方法
 	methods: {
 		//f 图像显示函数
-		toShow(index) {
+		async toShow(index) {
 			this.info.nowIndex = index;
 			// 去除所点击的目标焦点
 			if (window.event != undefined) window.event.target.blur();
@@ -191,7 +184,6 @@ const AppPreViewer = {
 			this.$el.focus();
 			// 找到取得对应信息
 			const target = this.cardInfoList[index];
-			this.message.content = this.cardInfoList[this.info.nowIndex].Content;
 			this.info.width = target.Width;
 			this.info.height = target.Height;
 			this.info.style["aspect-ratio"] = target.scale;
@@ -268,7 +260,7 @@ const AppPreViewer = {
 			this.toCenter(this.info.nowIndex);
 		},
 		//f [图片预览器显示&居中&图片切换]
-		toCenter() {
+		async toCenter() {
 			const windowInfo = document.documentElement; //获取窗口信息
 			// 获取窗口信息
 			let ww = windowInfo.clientWidth;
@@ -302,20 +294,20 @@ const AppPreViewer = {
 			this.toCenterThumbBox();
 		},
 		//f 单击关闭
-		clickToClose(e) {
+		async clickToClose(e) {
 			// console.log(e.target);
 			if (e.target.id === "preViewer") {
 				this.closeViewer();
 			}
 		},
 		//f 双击关闭
-		dblClickToClose(e) {
+		async dblClickToClose(e) {
 			if (e.target.id === "showPic" || e.target.id === "picShowBoard" || e.target.id === "thumbnail-viewport") {
 				this.closeViewer();
 			}
 		},
 		//f 关闭窗口
-		closeViewer(toLocate = false) {
+		async closeViewer(toLocate = false) {
 			//* 清空画布
 			this.info.imgEle = null;
 			this.$refs.picShowBoard.innerHTML = "";
@@ -336,10 +328,6 @@ const AppPreViewer = {
 					height: "auto",
 				},
 			};
-			this.message = {
-				content: "",
-				nowNum: 1,
-			};
 			// 移除键盘事件
 			document.removeEventListener("keydown", this.keyboardViewer);
 			document.removeEventListener("wheel", this.wheelInViewer);
@@ -353,7 +341,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 窗口拖动函数
-		mousedownViewer(e) {
+		async mousedownViewer(e) {
 			let target = e.target;
 			if (target.id != "picShowBoard") {
 				target = target.parentNode;
@@ -445,7 +433,7 @@ const AppPreViewer = {
 		},
 
 		//f 定位按钮
-		toLocateTarget() {
+		async toLocateTarget() {
 			// 目标对象
 			const target = document.querySelector(`.card[data-index="${this.info.nowIndex}"]`);
 			// console.log(target);
@@ -479,14 +467,14 @@ const AppPreViewer = {
 			}
 		},
 		//f 缩略图track切换按钮
-		switchThumbnailTrack() {
+		async switchThumbnailTrack() {
 			// 更改按钮值
 			this.btn.openThumbTrackBtn = !this.btn.openThumbTrackBtn;
 			// 进行视图居中
 			this.toCenter();
 		},
 		//f 居中thumbBox
-		toCenterThumbBox() {
+		async toCenterThumbBox() {
 			if (this.info.show == false) {
 				return;
 			}
@@ -520,7 +508,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 翻页函数(0:向前,1:向后)
-		turnPage(value) {
+		async turnPage(value) {
 			let nowIndex = this.matchIndexList.indexOf(this.info.nowIndex);
 			if (nowIndex == -1) {
 				return;
@@ -556,7 +544,7 @@ const AppPreViewer = {
 			}
 		},
 		//f 预览器的键盘事件
-		keyboardViewer(e) {
+		async keyboardViewer(e) {
 			this.$el.focus();
 			// 若当前是显示图片
 			if (this.info.showType == "img") {
@@ -602,7 +590,7 @@ const AppPreViewer = {
 			}
 		},
 		//f [视频播放器控制]
-		videoPlayerControl(command, option) {
+		async videoPlayerControl(command, option) {
 			// 获取视频播放器dom
 			const videoEle = this.$refs.showVideo;
 			videoEle.blur();
@@ -651,10 +639,27 @@ const AppPreViewer = {
 	},
 	// 计算属性
 	computed: {
+		//* 缩略图样式
 		getThumbnailViewportStyle: {
 			get() {
 				return this.thumbnailViewport.height + "px";
 			},
+		},
+		//* 展示信息
+		getMessage() {
+			let message = {
+				name: "",
+				width: 0,
+				height: 0,
+			};
+			if (this.info.showCard != null) {
+				let card = this.info.showCard;
+				message.name = card.Content;
+				message.width = parseInt(card.Width);
+				message.height = parseInt(card.Height);
+				// console.log(card.Width,card.Height);
+			}
+			return message;
 		},
 	},
 	watch: {},
@@ -663,4 +668,4 @@ const AppPreViewer = {
 	// [挂载后执行]
 	mounted() {},
 };
-// export {AppPreViewer};
+// export { AppPreViewer };

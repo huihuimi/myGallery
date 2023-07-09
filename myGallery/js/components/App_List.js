@@ -1,3 +1,9 @@
+// import { AppCard } from "./App_Card.js";
+// import { AppPreViewer } from "./App_PreViewer.js";
+// import { AppSearchBox } from "./App_SearchBox.js";
+// import { AppRightClickMenu } from "./App_RightClickMenu.js";
+// import { AppAreaSelector } from "./App_AreaSelector.js";
+// import { config } from "../config.js";
 // ?list的定义
 const AppList = {
 	components: {
@@ -113,7 +119,7 @@ const AppList = {
 				loadingQueueList: [], //* 动态加载队列
 				visibleCardSet: new Set(),
 				loadedCardSet: new Set(),
-				unloadedCardSet: new Set(this.cardInfoList),
+				unloadedCardSet: new Set(),
 				visibleIndexListInMatched: [],
 				unloadedIndexListInMatched: [],
 			}, // ?列表信息
@@ -536,10 +542,11 @@ const AppList = {
 						this.verifyMultipleCard(listIndex, false);
 					}
 				} else {
+					let listIndex = [];
 					//* 预览图片模式
 					let realIndex = matchIndexList.indexOf(this.preViewIndex);
-					startIndex = realIndex - this.onceLoadMaxCount;
-					endIndex = realIndex + this.onceLoadMaxCount;
+					let startIndex = realIndex - this.onceLoadMaxCount;
+					let endIndex = realIndex + this.onceLoadMaxCount;
 					listIndex = this.getUnloadingIndexList({
 						inputIndexList: this.listInfo.unloadedIndexListInMatched,
 						limitedIndexList: Array.from(this.searchInfo.matchCardSet).map((card) => card.index),
@@ -591,9 +598,11 @@ const AppList = {
 					(res) => {
 						// ?[获取成功]
 						// ?使用返回结果设置
-						card.Width = res.width;
-						card.Height = res.height;
-						card.scale = res.width / res.height;
+						if (card.Width < res.width && card.Height < res.height) {
+							card.Width = res.width;
+							card.Height = res.height;
+							card.scale = res.width / res.height;
+						}
 						// ?标记为metaInfo有效
 						card.metaInfoAvailable = true;
 					},
@@ -658,6 +667,9 @@ const AppList = {
 		//f [card]发送卡片点击事件
 		cardClickEvent(card) {
 			const e = window.event;
+			if (e.target.tagName == "A") {
+				return;
+			}
 			// 判断左右
 			if (e.button == 0) {
 				// 左键
@@ -677,6 +689,9 @@ const AppList = {
 		//f 发送卡片双击事件
 		cardDblclickEvent(card) {
 			const e = window.event;
+			if (e.target.tagName == "A") {
+				return;
+			}
 			if (e.target.tagName != "A") {
 				// 向父组件发送toShow请求切换请求
 				this.$refs.preViewer.toShow(card.index);
@@ -841,7 +856,11 @@ const AppList = {
 	},
 	watch: {
 		cardInfoList(newVal, oldVal) {
-			this.listInfo.unloadedCardSet = new Set(newVal); //* 更新list中的未加载集合
+			this.listInfo.loadedCardSet = new Set(); //* 已加载集合置空
+			this.listInfo.unloadedCardSet = new Set(); //* 更新list中的未加载集合
+			this.cardInfoList.forEach((card) => {
+				this.listInfo.unloadedCardSet.add(card);
+			});
 		},
 	},
 	directives: {},
@@ -860,4 +879,4 @@ const AppList = {
 		// console.log(this.cardInfoList);
 	},
 };
-// export {AppList};
+// export { AppList };

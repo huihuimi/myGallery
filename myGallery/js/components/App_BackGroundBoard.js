@@ -1,28 +1,34 @@
+// import { config } from "../config.js";
 // 背景板的定义
 const AppBackGroundBoard = {
 	template: /*html*/ `
   <div id="backGroundBoard" ref="backGroundBoard"
     :data-show-type="info.showType"
-    :style="{
-      'background-image':'url('+ info.imgUrl +')',
-    }"
     @mousewheel="wheelInViewer"
   >
-    <!-- 图片类背景用backGroundBoard容器自身显示 -->
+    <!-- 图片类背景 -->
+		<div id="backgroundImg" ref="backgroundImg"
+			:data-show="info.show&&info.imgUrl!=''"
+			:style="{
+				'background-image':'url('+ info.imgUrl +')',
+			}"
+		></div>
     <!-- 视频类背景 -->
     <video id="backgroundVideo" ref="backgroundVideo" controls loop="loop" autoplay="true"
+		:data-show="info.show&&info.videoUrl!=''"
     :src="info.videoUrl"
     ></video>
   </div>
   `,
 	props: {
-    cardInfoList:Object,
+		cardInfoList: Object,
 		regex: Object, // 正则表达式
 	},
 	data() {
 		return {
 			info: {
 				nsfw: false,
+				show: false,
 				showType: "none",
 				imgUrl: "",
 				videoUrl: "",
@@ -30,24 +36,101 @@ const AppBackGroundBoard = {
 		};
 	},
 	methods: {
+		//f 初始化背景
+		async initialBackground() {
+			if (config.initialBackgroundIndexByCard >= 0) {
+				let url = this.cardInfoList[config.initialBackgroundIndexByCard].LinkUrl
+				let isOK = await this.alterBackground(url)
+				if (!isOK) {
+					url = this.cardInfoList[config.initialBackgroundIndexByCard].PicUrl
+					await this.alterBackground(url)
+				}
+			} else {
+				for (let i = 0; i < this.cardInfoList.length; i++) {
+					if (this.info.showType != "none") {
+						break;
+					}
+					const card = this.cardInfoList[i];
+					let url = card.LinkUrl;
+					let isOK = await this.alterBackground(url)
+					if (!isOK) {
+						url = card.PicUrl;
+						await this.alterBackground(url);
+					}
+				}
+			}
+		},
 		// 更改body的背景(bodyDom操作)
-		alterBackground(url) {
+		async alterBackground(url) {
 			let isOK = false;
-			// 判断url类型
+			let promiseListTemp = []//* 请求列表
+			//* 记录旧数据
+			let old = {
+				showType: 'none',
+				imgUrl: '',
+				videoUrl: '',
+			}
+			if (this.info.showType == 'img') {
+				old.showType = 'img'
+				old.imgUrl = this.info.imgUrl
+			} else if (this.info.showType == 'video') {
+				old.showType = 'video'
+				old.videoUrl = this.info.videoUrl
+			}
+			this.info.show = false
+			//* 判断url类型并尝试更换
 			if (this.regex.isImg.test(url)) {
 				this.info.imgUrl = `'${url}'`;
 				this.info.videoUrl = "";
 				this.info.showType = "img";
-				isOK = true;
+				let p = new Promise((resolve, reject) => {
+					let img = new Image()
+					img.src = url
+					if (img.complete) {
+						resolve(true)
+						img = null
+					} else {
+						img.onload = () => {
+							img = null
+							resolve(true)
+						}
+						img.onerror = () => {
+							img = null
+							reject(false)
+						}
+					}
+				})
+				promiseListTemp.push(p)
+				isOK = await p
 			} else if (this.regex.isVideo.test(url)) {
 				this.info.videoUrl = url;
 				this.info.imgUrl = "";
 				this.info.showType = "video";
-				isOK = true;
+				const videoEle = this.$refs.backgroundVideo
+				let p = new Promise((resolve, reject) => {
+					videoEle.oncanplay = () => {
+						resolve(true)
+					}
+					videoEle.onerror = () => {
+						reject(false)
+					}
+					// console.log(videoEle.error);
+				})
+				promiseListTemp.push(p)
+				isOK = await p
 			} else {
 				this.info.showType = "none";
 			}
-			return isOK;
+
+			if (!isOK) {
+				//* 失败则还原数据
+				this.info.showType = old.showType
+				this.info.imgUrl = old.imgUrl
+				this.info.videoUrl = old.videoUrl
+			}
+			this.info.show = true
+			return isOK
+
 		},
 		// 鼠标滚动事件
 		wheelInViewer(e) {
@@ -110,26 +193,10 @@ const AppBackGroundBoard = {
 	},
 	watch: {
 		cardInfoList(newVal, oldVal) {
-      console.log('更新');
-			if (config.initialBackgroundIndexByCard >= 0) {
-				this.alterBackground(cardInfoList[config.initialBackgroundIndexByCard].PicUrl);
-			} else {
-				for (let i = 0; i < cardInfoList.length; i++) {
-					if (this.info.showType != "none") {
-						break;
-					}
-					const card = cardInfoList[i];
-					let url = card.PicUrl;
-					if (!this.alterBackground(url)) {
-						url = card.LinkUrl;
-						this.alterBackground(url);
-					}
-				}
-			}
+			// console.log('更新');
+			this.initialBackground()
 		},
 	},
-	created() {
-		
-	},
+	created() { },
 };
-// export {AppBackGroundBoard};
+// export { AppBackGroundBoard };
