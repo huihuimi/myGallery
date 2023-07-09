@@ -1,0 +1,2016 @@
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /* 禁止选中文字 */
+  user-select: none;
+  /* 盒子模型 */
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+
+
+  & body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    /* background-image: url(../resources/background.jpg); */
+
+    /* 居中背景图像 */
+    background-position: center;
+    /* 固定背景图像 */
+    background-attachment: fixed;
+    /* 不重复 */
+    background-repeat: repeat;
+    background-size: contain;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: 1s ease;
+
+  }
+
+  /* 配合Vue防止加载页面时显示Vue源码 */
+  [v-cloak] {
+    opacity: 0;
+    display: none;
+  }
+
+  /* 滚动条样式 */
+  /* 滚动条整体部分，宽度 */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: #fefefe00;
+  }
+
+  /* 轨道 */
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  /* 滑块 */
+  ::-webkit-scrollbar-thumb {
+    background: #0d7ac39c;
+    border-radius: 10px;
+  }
+}
+
+/* 列表框架样式 */
+#listPage {
+  & {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+
+    min-width: 425px;
+
+    border-radius: 10px;
+
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+    align-items: center;
+    /* 禁止拖拽 */
+    -webkit-user-drag: none;
+    transition: .5s;
+  }
+
+}
+
+/* 背景版样式 */
+#listPage #backGroundBoard {
+  & {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* 居中背景图像 */
+    background-position: center;
+    /* 固定背景图像 */
+    background-attachment: fixed;
+    /* 不重复 */
+    background-repeat: repeat;
+    background-size: contain;
+
+    background-color: rgba(0, 0, 0, 0);
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    transition: 1s ease;
+
+    &:has([data-show-type='video']) {
+      background-color: rgb(0, 0, 0);
+      transition: 1s ease;
+    }
+
+    /* 背景板在nsfw模式下的样式 */
+    :root:has(#NSFWModeSwitch[data-value="true"]) & {
+      backdrop-filter: blur(5px);
+      filter: blur(5px);
+      transition: 1s;
+    }
+
+    :root:has(#NSFWModeSwitch[data-value="false"]) & {
+      backdrop-filter: blur(0px);
+      filter: blur(0px);
+      transition: 1s;
+    }
+  }
+
+  #backgroundVideo {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    -webkit-user-drag: none;
+    object-fit: contain;
+    transition: 1s;
+
+    background: rgb(0, 0, 0);
+
+    &::-webkit-media-controls {
+      /* color: white; */
+      --gradient-steps: hsla(0, 0%, 0%, 0) 0%,
+        hsla(0, 0%, 0%, 0.013) 8.1%,
+        hsla(0, 0%, 0%, 0.049) 15.5%,
+        hsla(0, 0%, 0%, 0.104) 22.5%,
+        hsla(0, 0%, 0%, 0.175) 29%,
+        hsla(0, 0%, 0%, 0.259) 35.3%,
+        hsla(0, 0%, 0%, 0.30) 41.2%,
+        hsla(0, 0%, 0%, 0.35) 52.9%;
+      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    &:focus {
+      /* 去除video获得焦点的边框 */
+      outline: -webkit-focus-ring-color auto 0;
+    }
+
+    :root:has(#backGroundBoard[data-show-type='video']) & {
+      opacity: 1;
+      transition: 1s;
+    }
+
+    :root #backGroundBoard:not([data-show-type='video']) & {
+      opacity: 0;
+      transition: 1s;
+    }
+
+    :root:has(#NSFWModeSwitch[data-value="true"]) & {
+      filter: blur(5px);
+      transition: 1s;
+    }
+
+    :root:has(#NSFWModeSwitch[data-value="false"]) & {
+      filter: blur(0px);
+      transition: 1s;
+    }
+  }
+
+}
+
+/* 头部区域 */
+#listPage .header {
+  & {
+    position: sticky;
+    width: 100%;
+
+    opacity: 1;
+    z-index: 100;
+    /* box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5); */
+    /* border-radius: 10px; */
+    /* overflow: hidden; */
+    /* opacity: 0; */
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(5px);
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    transition: .5s;
+  }
+
+  /* 画廊切换按钮变化时的样式 */
+  :root:has(#listPageShowSwitch[data-value="true"]) & {
+    /* 开启的效果 */
+    opacity: 1;
+
+    & .titleDragBlock {
+      top: 0px;
+    }
+  }
+
+  :root:has(#listPageShowSwitch[data-value="false"]) & {
+    /* 关闭的效果 */
+    opacity: 0;
+
+    & .titleDragBlock {
+      top: -110%;
+    }
+
+    &:hover {
+      opacity: 1;
+
+      & .titleDragBlock {
+        top: 0px;
+      }
+    }
+  }
+
+  /* 拖动块(quicker中Webview2的无边框模式下的可窗口移动的方块)样式 */
+  & .titleDragBlock {
+    flex: 25px;
+    position: relative;
+    left: 0;
+    right: 0;
+    width: 100%;
+    color: rgb(255, 255, 255);
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
+    text-shadow: 0px 0px 4px rgba(0, 0, 0, 1);
+    background-color: rgba(255, 255, 255, .3);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    /* border-top: 1px solid rgba(255, 255, 255, 0.5); */
+
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: .5s;
+  }
+
+  /* 窗口关闭按钮 */
+  & #closeWindow {
+    position: absolute;
+    margin: 0 auto;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 25px;
+    height: auto;
+    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 1); */
+    background-color: rgba(255, 255, 255, 0);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & svg {
+      fill: rgba(255, 0, 0, 1);
+    }
+  }
+
+  /* 加载进度条样式 */
+  & #loadProgressBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background-color: #dddddd4d; */
+    box-shadow: 4px 4px 12px #00000098;
+    z-index: -1;
+
+    display: flex;
+
+    transition: 1s;
+
+
+    &[data-loaded="true"] {
+      opacity: 0;
+      transition: 1s;
+    }
+
+    &[data-percentage="100%"] {
+      transition: 1s;
+    }
+
+    &>.progressBar {
+      width: 0%;
+      background-color: rgb(0, 255, 30, 0.8);
+      backdrop-filter: blur(5px);
+      transition: 1s;
+    }
+  }
+}
+
+/* listPage主体部分 */
+#listPage .body {
+  flex: 1 1 auto;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 25px);
+
+  padding: 6px 0;
+
+  display: flex;
+  flex-flow: row;
+  justify-content: space-around;
+  align-items: stretch;
+  /* transition: none; */
+}
+
+/* 左侧导航 */
+#listPage #navBarBox {
+
+  /* 占位符部分 */
+  & {
+    flex: 0 0 auto;
+    position: relative;
+    height: 100%;
+    margin-right: 12px;
+    z-index: 1;
+    transition: 0.5s;
+  }
+
+  /* 主体部分 */
+  & #navBarBody {
+    position: absolute;
+    margin: auto 0;
+    top: 0;
+    bottom: 0;
+    width: 110px;
+    height: fit-content;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-self: center;
+    align-items: center;
+    gap: 4px;
+
+    padding: 4px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+    transition: 0.5s;
+
+
+  }
+
+  /* 展开和折叠的样式 */
+  &:has(.navBarCallButton[data-unfold="true"]) {
+    width: 100px;
+
+    & #navBarBody {
+      left: 0;
+
+      &:hover {
+        background-color: rgba(2, 159, 88, 0.387);
+        border: 2 ox solid rgba(0, 0, 0, 0.503);
+        box-shadow: 0 0 10px rgba(20, 180, 192, 0.636),
+          inset 0 0 20px rgba(12, 146, 81, 0.402);
+      }
+
+      &:hover>#navbar {
+        background-color: rgba(186, 255, 232, 0.701);
+      }
+    }
+
+    & #navbar {
+      left: 0;
+    }
+
+    & .navBarCallBox {
+      top: -24px;
+      left: 5px;
+    }
+
+    /* 加载状态提示框 */
+    & #cardLoadState {
+      top: 0;
+      right: 0;
+      transform: rotate(0);
+
+      transition: .5s;
+    }
+
+    /* 已选数量提示框 */
+    & #cardSelectedCount {
+      top: 0;
+      right: 0;
+      transform: rotate(0);
+      transition: .5s;
+    }
+
+
+  }
+
+  &:has(.navBarCallButton[data-unfold="false"]) {
+    width: 20px;
+
+    & #navBarBody {
+      left: -80px;
+    }
+
+    & #navbar {
+      left: -30px;
+    }
+
+    & .navBarCallBox {
+      top: -24px;
+      left: calc(110px - 24px);
+    }
+
+    /* 加载状态提示框 */
+    & #cardLoadState {
+      top: 40px;
+      right: -40px;
+      transform: rotate(-90deg);
+      transition: .5s;
+
+      & .cardLoadMessage {
+        writing-mode: horizontal-tb;
+        text-orientation: upright;
+      }
+
+    }
+
+    /* 已选数量提示框 */
+    & #cardSelectedCount {
+      top: 120px;
+      right: -40px;
+      transform: rotate(-90deg);
+      transition: .5s;
+      writing-mode: horizontal-tb;
+      text-orientation: upright;
+    }
+  }
+
+  /* 提示窗通用样式 */
+  & span {
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    transition: .5s;
+    z-index: 1;
+  }
+
+  /* 加载状态提示框 */
+  #cardLoadState {
+    position: relative;
+    background-color: rgba(244, 244, 244, 0.797);
+    overflow: hidden;
+
+    /* 加载状态信息样式 */
+    .cardLoadMessage {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 微型进度条 */
+    .miniLoadingBar {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(to right,
+          rgba(255, 234, 0, 0.9) 0%,
+          rgb(34, 255, 0, 1) 100%);
+      /* z-index: 0; */
+      /* transition: 1s; */
+    }
+
+  }
+
+  /* 已选数量提示框 */
+  #cardSelectedCount {
+    position: relative;
+    background-color: rgba(36, 224, 111, 0.797);
+
+    &::before {
+      content: '选中';
+    }
+
+    &::after {
+      content: '个';
+    }
+  }
+
+  /* 导航折叠呼出框 */
+  .navBarCallBox {
+    position: absolute;
+    width: 24px;
+    top: -24px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+
+    height: fit-content;
+
+    transition: .5s;
+  }
+
+  /* 导航呼出按钮 */
+  .navBarCallButton {
+    & {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0);
+      cursor: pointer;
+      transition: .5s
+    }
+
+    &:hover {
+      background-color: rgb(255, 255, 255);
+    }
+
+    & svg {
+      /* 多重阴影(类似发光效果) */
+      filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #ffffff) drop-shadow(0 0 25px #ffffff);
+    }
+
+    &[data-unfold="true"] {
+      & svg {
+        transform: rotate3d(0);
+        transition: .5s;
+      }
+
+    }
+
+    &[data-unfold="false"] {
+      & svg {
+        /* 绕y轴旋转180度 */
+        transform: rotate3d(0, 1, 0, 180deg);
+        transition: .5s;
+      }
+
+    }
+  }
+
+  /* 导航列表 */
+  #navbar {
+    /* 去除ul的默认样式 */
+    position: relative;
+
+    background-color: rgba(127, 255, 212, 0.2);
+    border-radius: 4px;
+    box-shadow: 1px 1px 10px #57555568;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: start;
+    align-items: center;
+    gap: 2px;
+    transition: 0.5s;
+
+    /* 单次加载数量选择框 */
+    #once-loading-count-options-box {
+      width: 100%;
+      font-size: medium;
+      border-radius: 4px;
+      background-color: rgba(250, 235, 215, 0.5);
+
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      align-items: center;
+      padding: 2px;
+      gap: 2px;
+
+    }
+
+    #once-loading-count-options-box select {
+      width: 100%;
+      font-size: medium;
+      border-radius: 4px;
+      background-color: rgba(138, 138, 138, 0.5);
+    }
+
+    * {
+      opacity: 0.5;
+      transition: inherit;
+    }
+
+    &:hover * {
+      opacity: 1;
+      transition: inherit;
+    }
+
+  }
+
+  /* 菜单栏按钮的默认样式 */
+  & button {
+    /* 去除li的默认样式 */
+    list-style-type: none;
+    /* 自定义颜色 */
+    --background-color-default: #cccccc7b;
+    --background-color-hover-important: #ff0000ae;
+    --background-color-hover-attention: #f0f815d4;
+    --background-color-hover-normal: #0dd14bac;
+    --background-color-hover-active: rgba(13, 169, 190, 0.674);
+    --background-color-hover-quicker: #0084ffbf;
+
+    /* 通用样式 */
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    width: 100%;
+    font-size: medium;
+    cursor: pointer;
+    padding: 1px;
+
+    background-color: var(--background-color-default);
+    transition: 0.5s;
+
+    &:hover {
+      background-color: var(--background-color-hover-normal);
+      transition: 1s;
+    }
+
+    /* NSFW模式切换按钮样式 */
+    &#NSFWModeSwitch {
+      &[data-value="true"] {
+        background-color: rgba(255, 255, 0, 0.589) !important;
+
+        &::after {
+          content: '(当前:开启)';
+        }
+      }
+
+      &[data-value="false"]::after {
+        content: '(当前:关闭)';
+      }
+    }
+
+    /* 标题显示切换按钮 */
+    &#cardTitleShowSwitch {
+      &[data-value="true"] {
+        background-color: rgba(13, 169, 190, 0.674) !important;
+
+        &::after {
+          content: '(当前:显示)';
+        }
+      }
+
+      &[data-value="false"]::after {
+        content: '(当前:隐藏)';
+      }
+    }
+
+    /* "清空选择"按钮样式 */
+    &#cleanSelection {
+      &:hover {
+        background-color: var(--background-color-hover-important) !important;
+      }
+    }
+
+    /* "缓慢加载"按钮样式 */
+    &#slowLoading {
+      &[data-value="true"] {
+        background-color: var(--background-color-hover-active) !important;
+
+        &::after {
+          content: "[当前:开启]";
+        }
+      }
+
+      &[data-value="false"]::after {
+        content: "[当前:关闭]";
+      }
+    }
+
+    /* "加载剩余项"按钮样式 */
+    &#loadingRemaining {
+      background-color: var(--background-color-hover-attention) !important;
+
+      &:hover {
+        background-color: var(--background-color-hover-important) !important;
+      }
+    }
+
+    /* "下载选中项(Quicker)"按钮样式 */
+    &#downloadSelectedInQuicker {
+      background-color: var(--background-color-hover-quicker) !important;
+
+      &:hover {
+        background-color: var(--background-color-hover-important) !important;
+      }
+
+    }
+
+    /* Quicker互动按钮(切换为：普通模式)的样式 */
+    &#toNormalMode {
+      background-color: var(--background-color-hover-quicker) !important;
+
+      &:hover {
+        background-color: var(--background-color-hover-important) !important;
+      }
+    }
+
+    /* 允许背景切换按钮样式 */
+    &#enableSwitchBackGround {
+      font-size: medium;
+
+      /* 启用背景切换时的样式 */
+      &[data-value="true"] {
+        background-color: rgba(13, 169, 190, 0.674) !important;
+
+        &::after {
+          content: '(当前:允许)';
+        }
+      }
+
+      &[data-value="false"]::after {
+        content: '(当前:禁止)';
+      }
+    }
+
+    /* List显示状态切换按钮 */
+    &#listPageShowSwitch {
+      font-size: medium;
+
+      &[data-value="true"]::after {
+        content: '(当前:开启)';
+      }
+
+      &[data-value="false"] {
+        background-color: var(--background-color-hover-normal) !important;
+        transition: 0.5s;
+
+        &::after {
+          content: '(当前:关闭)';
+        }
+      }
+    }
+
+    /* "滚动吸附"切换按钮 */
+    &#openScrollSnap {
+      &[data-value="true"] {
+        background-color: var(--background-color-hover-normal) !important;
+
+        &::after {
+          content: '(当前:开启)';
+        }
+      }
+
+      &[data-value="false"]::after {
+        content: '(当前:关闭)';
+      }
+    }
+  }
+
+}
+
+/* zoomBar样式 */
+.body #zoomBar {
+  & {
+    flex: 0 0 auto;
+    position: relative;
+    margin: 6px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    /* filter: invert(100%); */
+
+    /* 旋转90度 */
+    transform: rotate(90deg);
+
+    transition: .5s;
+  }
+
+  &>input[type=range]::-webkit-slider-runnable-track {
+    appearance: none;
+    -webkit-appearance: none;
+    /*清除系统默认样式*/
+  }
+
+  /* 缩放条样式 */
+  .range {
+    appearance: none;
+    -webkit-appearance: none;
+    /*清除系统默认样式*/
+    position: absolute;
+    /* margin: 0 auto; */
+    width: 400px;
+    height: 15px;
+
+    background: rgba(0, 0, 0, 0.5);
+    /* background-color: rgba(255, 255, 255, .3); */
+    /* backdrop-filter: blur(5px); */
+
+
+    outline: none;
+    border-radius: 20px;
+    border: 2 ox solid #000;
+    box-shadow: 0 0 0 2px #151515, inset 0 0 5px #000;
+  }
+
+  /* 滑块样式 */
+  .range::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: rgb(166, 166, 166);
+    cursor: pointer;
+    border: 5px solid rgba(23, 65, 205, 0.8);
+    border-radius: 50%;
+    /* box-shadow: -415px 00 400px rgb(166, 166, 166); */
+    box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.5);
+
+  }
+
+  /* 画廊切换按钮变化时的样式 */
+  :root:has(#listPageShowSwitch[data-value="true"]) & {
+    /* 开启的效果 */
+    opacity: 1;
+  }
+
+  :root:has(#listPageShowSwitch[data-value="false"]) & {
+    /* 关闭的效果 */
+    opacity: 0;
+
+    &:hover {
+      opacity: 1;
+    }
+
+  }
+}
+
+/* 列表样式 */
+.body #list {
+  flex: 100 100 auto;
+  position: relative;
+  /* width: 100%; */
+
+  padding: 16px;
+
+
+  border-radius: 10px;
+  /* border: 1px solid #c6b5b5; */
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+
+  background-color: #0d6e9849;
+
+  /* 让滚动条不占位置 */
+  overflow-y: scroll;
+  overflow-x: hidden;
+  /* scroll-behavior: smooth; */
+  z-index: 2;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: stretch;
+  align-content: start;
+  gap: 8px;
+
+
+  /* 滚动贴合的容器设置 */
+  scroll-snap-type: y proximity;
+
+  /* scroll-snap-type: none; */
+  scroll-padding: 16px;
+  /* scroll-snap-stop: always; */
+  /* content-visibility: auto; */
+  /*动画过渡时间*/
+  transition: 1s;
+
+
+  &:not([data-column-count="0"]):not([data-column-count="1"]) {
+
+    /* 未被选中时的img样式(通常) */
+    .card[data-selected="false"] {
+      >img.content {
+        transform: scale(100%);
+        transition: 0.5s !important;
+      }
+
+      &:hover>img.content {
+        transform: scale(110%);
+        transition: 0.5s !important;
+      }
+    }
+
+    /* 被选中时的img样式(通常) */
+    .card[data-selected="true"] {
+      >img.content {
+        transform: scale(110%);
+        transition: 0.5s !important;
+      }
+
+      &:hover>img.content {
+        transform: scale(100%);
+        transition: 0.5s !important;
+      }
+    }
+
+  }
+
+  &[data-column-count="0"],
+  &[data-column-count="1"] {
+
+    .card[data-selected]>img.content,
+    .card[data-selected]:hover>img.content {
+      transform: scale(100%);
+      transition: 0.5s;
+    }
+
+    /* 未被选中时的img样式(特殊) */
+    .card[data-selected="false"]>img.content {
+      transform: scale(100%);
+      transition: 0.5s;
+
+    }
+
+    /* 被选中时的img样式(特殊) */
+    .card[data-selected="true"]>img.content {
+      transform: scale(100%);
+      transition: 0.5s;
+    }
+
+  }
+
+  /* list被控制的样式 */
+  :root:has(#listPageShowSwitch[data-value="true"]) & {
+    /* 开启的效果 */
+    bottom: 0;
+    transition: .5s;
+  }
+
+  :root:has(#listPageShowSwitch[data-value="false"]) & {
+    /* 关闭的效果 */
+    bottom: -120%;
+    transition: .5s;
+  }
+
+}
+
+/* 卡片样式 */
+#list>.card {
+  flex: 0 0 auto;
+  /* 默认设置 */
+  /* 滚动贴合的子元素设置 */
+  scroll-snap-align: start;
+
+  position: relative;
+  aspect-ratio: var(--ratio);
+  --width-self: calc(var(--card-max-height) * var(--ratio));
+  --width-single: 100%;
+
+  max-width: 100%;
+  max-height: var(--card-max-height);
+  /* width: fit-content; */
+  width: var(--width-self);
+
+
+  border-radius: 8px;
+  /* border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3); */
+  box-shadow: 1px 2px 6px 0 rgba(0, 0, 0, 0.5);
+
+  overflow: hidden;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: stretch;
+  justify-items: stretch;
+  align-content: stretch;
+
+  cursor: pointer;
+
+  transition: 0.5s;
+
+  /* content-visibility: auto; */
+  /* contain-intrinsic-size: var(--card-max-height); */
+
+  /* .card拖拽时的样式 */
+  &.moving {
+    background-color: yellow;
+    opacity: .5;
+    border: 2px dashed #ccc;
+    cursor: grab;
+  }
+
+  /* 遮罩(插入位置视觉提示器)样式 */
+  .card-mask {
+    & {
+      margin: auto;
+      left: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      z-index: 0;
+
+      /* 不响应鼠标事件(鼠标事件穿透) */
+      pointer-events: none;
+    }
+
+    /* 左右共同样式 */
+    &>.card-mask-public {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+
+      width: 50%;
+      height: 100%;
+
+      opacity: 0;
+    }
+
+    /* 显示时的样式 */
+    &>.card-mask-public[data-hover="true"] {
+      opacity: 1;
+    }
+
+    /* 左侧样式 */
+    &>.card-mask-left {
+      left: 0;
+      background: linear-gradient(to right,
+          rgb(255, 225, 0, 1) 0%,
+          rgb(255, 225, 0, 0) 75%);
+    }
+
+    /* 右侧样式 */
+    &>.card-mask-right {
+      right: 0;
+      background: linear-gradient(to left,
+          rgb(255, 225, 0, 1) 0%,
+          rgb(255, 225, 0, 0) 75%);
+    }
+
+  }
+
+  /* 卡片悬停触发 */
+  &:hover {
+    box-shadow: 1px 2px 12px 6px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+
+    >.title {
+      background-color: #1fabd6a5;
+    }
+  }
+
+  /* card被选中的样式 */
+  &[data-selected="true"] {
+    box-shadow: 4px 4px 20px rgba(255, 0, 200, 0.5);
+
+    /* 选中时的标题样式 */
+    >.title {
+      background-color: #d61fb4a5;
+    }
+
+    /* 选中时(悬浮card时)的标题样式 */
+    &:hover>.title {
+      background-color: #d61fb4a5;
+    }
+  }
+
+  /* card被查看时的样式 */
+  &[data-previewed="true"] {
+    transform: scale(1.1);
+    z-index: 2;
+    box-shadow: 4px 4px 32px #01ff2c86;
+    filter: drop-shadow(0 0 2px #01ff2c86) drop-shadow(0 0 3px #01ff2c86) drop-shadow(0 0 4px #01ff2c86);
+    transition: 1s;
+  }
+
+  &:hover * {
+    filter: blur(0px);
+  }
+
+  /* nsfw样式(由按钮影响样式) */
+  :root:has(#NSFWModeSwitch[data-value="true"]) & {
+    & .content {
+      filter: blur(4px);
+    }
+
+    &:hover {
+      .content {
+        filter: blur(0px);
+      }
+    }
+  }
+
+}
+
+/* 卡片内容区样式 */
+.card>.content {
+  & {
+    /* 内容区(content) - 通用样式 */
+    display: block;
+    aspect-ratio: var(--ratio);
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+
+    /* object-fit: contain; */
+
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    object-position: center;
+    /* object-fit: contain; */
+    -webkit-user-drag: none;
+    cursor: pointer;
+
+    /* 居中背景图像 */
+    background-position: center;
+    /* 不重复 */
+    background-repeat: repeat;
+    background-size: contain;
+    /* 默认样式 */
+    opacity: 0;
+
+    /* content-visibility: auto; */
+
+    /* 设置动画过渡时间 */
+    transition: 1s;
+  }
+
+  /* 显示时的样式 */
+  &[data-show='true'] {
+    opacity: 1;
+    filter: blur(0px);
+    transition: 1s;
+  }
+
+  /* 不显示时的样式 */
+  &[data-show='false'] {
+    opacity: 0;
+    filter: blur(10px);
+    transition: 1s;
+  }
+
+  /* 图片加载失败的样式 */
+  &:not([src]),
+  &:has([src=""]) {
+    opacity: 0;
+    transition: 0.5s;
+    transition: none;
+  }
+}
+
+/* 卡片标题盒子样式 */
+.card>.title {
+  /* title默认样式 */
+  position: absolute;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 30%;
+  /* border-radius: .5rem; */
+  background-color: rgba(255, 255, 255, 0.432);
+  transition: .5s;
+
+  /* linkBox样式(装a标签) */
+  .linkBox {
+    & {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+
+      transition: .5s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  /* 卡片文本(a标签内)样式 */
+  & a {
+
+    /* a标签默认样式 */
+    & {
+      position: relative;
+      margin: auto;
+
+      /* display: inline-block; */
+      /* height: 100%; */
+      text-align: center;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+
+      font-size: 100%;
+    }
+
+    /* 对所有a标签进行设置 */
+    &:link {
+      text-decoration: none;
+      color: blue
+    }
+
+    &:active {
+      text-decoration: blink
+    }
+
+    &:hover {
+      text-decoration: underline;
+      color: red
+    }
+
+    &:visited {
+      text-decoration: none;
+      color: green
+    }
+  }
+
+  /* title样式(由按钮影响样式) */
+  :root:has(#cardTitleShowSwitch[data-value="true"]) & {
+    /* 显示title */
+    opacity: 1;
+    z-index: 1;
+  }
+
+  :root:has(#cardTitleShowSwitch[data-value="false"]) & {
+    /* 隐藏title */
+    pointer-events: none;
+    opacity: 0;
+  }
+}
+
+/* viewer样式 */
+/* 遮罩 */
+#preViewer {
+  & {
+    position: absolute;
+    background-color: rgba(40, 40, 40, 0.8);
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* 禁止选中文本 */
+    /* user-select: none; */
+    /* 禁止图文拖拽 */
+    -webkit-user-drag: none;
+
+    transition: .1s;
+  }
+
+  /* 开启时的样式 */
+  &[data-show="true"] {
+    position: absolute;
+    z-index: 100;
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    transition: .2s;
+  }
+
+  /* 关闭时的样式 */
+  &[data-show="false"] {
+    & {
+      position: absolute;
+      /* opacity: 0; */
+      z-index: -100;
+      width: 0;
+      height: 0;
+      transition: .25s;
+    }
+
+    #messageInViewer {
+      opacity: 0;
+    }
+    .preViewer-menu{
+      opacity: 0;
+    }
+  }
+
+  /* 信息显示 */
+  #messageInViewer {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 1%;
+    z-index: 1000;
+    color: rgb(55, 255, 0);
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.461);
+
+  }
+
+  /* 内容展示区域 */
+  #displayArea {
+
+    /* 画布 */
+    & #picShowBoard {
+      & {
+        position: fixed;
+        padding: 2px;
+        border: 2px solid rgba(255, 255, 255, 0.132);
+        border-radius: 2px;
+        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.348);
+        background-color: rgba(40, 40, 40, 0.8);
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        transition: 0.25s;
+      }
+
+      /* 画布拖拽时的动画样式 */
+      &[data-dragging="true"] {
+        transition: none;
+      }
+
+      :root #preViewer:has([data-show-type="img"]) & {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      :root #preViewer:not([data-show-type="img"]) & {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* 图片本体 */
+      & #showPic {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+
+        flex-shrink: 0;
+        aspect-ratio: auto;
+        cursor: grab;
+        /* 禁止选中文本 */
+        /* user-select: none; */
+        /* 禁止拖拽 */
+        -webkit-user-drag: none;
+
+        overscroll-behavior: none;
+
+        transition: 0.25s;
+
+        &[data-show="true"] {
+          opacity: 1;
+          transition: .5s;
+        }
+
+        &[data-show="false"] {
+          opacity: 0;
+          transition: none;
+        }
+      }
+
+    }
+
+    /* 视频播放器框架 */
+    & #videoPlayer {
+      position: fixed;
+
+      width: 100%;
+      height: 100%;
+
+      padding: 2px;
+      border: 2px solid rgba(255, 255, 255, 0.132);
+      border-radius: 2px;
+      box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.348);
+      background-color: rgba(40, 40, 40, 0.8);
+
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      /* transition: .2s; */
+
+      :root #preViewer:has([data-show-type="video"]) & {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      :root #preViewer:not([data-show-type="video"]) & {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* 视频播放器本体 */
+      #showVideo {
+        & {
+          max-width: 100%;
+          max-height: 100%;
+          -webkit-user-drag: none;
+          /* transition: .2s; */
+        }
+
+        &::-webkit-media-controls {
+          /* color: white; */
+          --gradient-steps: hsla(0, 0%, 0%, 0) 0%,
+            hsla(0, 0%, 0%, 0.013) 8.1%,
+            hsla(0, 0%, 0%, 0.049) 15.5%,
+            hsla(0, 0%, 0%, 0.104) 22.5%,
+            hsla(0, 0%, 0%, 0.175) 29%,
+            hsla(0, 0%, 0%, 0.259) 35.3%,
+            hsla(0, 0%, 0%, 0.30) 41.2%,
+            hsla(0, 0%, 0%, 0.35) 52.9%;
+          text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        &:focus {
+          /* 去除video获得焦点的边框 */
+          outline: -webkit-focus-ring-color auto 0;
+        }
+
+        &[data-show="true"] {
+          opacity: 1;
+          transition: .5s;
+        }
+
+        &[data-show="false"] {
+          opacity: 0;
+          transition: none;
+        }
+      }
+    }
+  }
+
+  /* 图片切换 按钮样式 */
+  .pv-pic-window-pre,
+  .pv-pic-window-next {
+    position: absolute;
+    height: 100%;
+    width: 36px;
+    background: #9797973e no-repeat center;
+    opacity: 0;
+    cursor: pointer;
+    /* pointer-events: none; */
+    transition: opacity .5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+      opacity: 1;
+      pointer-events: all;
+      transition: .5s;
+    }
+  }
+
+  /* .pv-pic-window-pre:hover,
+  .pv-pic-window-next:hover {
+    opacity: 1;
+    pointer-events: all;
+    transition: .5s;
+  } */
+
+  .pv-pic-window-pre {
+    left: 0px;
+    background-size: contain;
+  }
+
+  .pv-pic-window-next {
+    right: 0px;
+    background-size: contain;
+  }
+
+  /* 底部缩略图区容器 */
+  #thumbnail-viewport {
+    position: fixed;
+    /* height: 150px; */
+    width: 100%;
+    bottom: 0px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    /* 滚动贴合的容器设置 */
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+
+    /* background-color: #000; */
+
+    display: flex;
+    align-items: center;
+
+    transition: .25s;
+  }
+
+  /* 底部缩略图区容器-关闭时的样式 */
+  &[data-show="false"] #thumbnail-viewport {
+    bottom: -200px !important;
+    opacity: 0;
+    transition: .25s;
+  }
+
+  #thumbnail-viewport {
+
+    /* 底部缩略图水平轨道 */
+    #thumbnail-track {
+      & {
+        position: relative;
+        height: 100%;
+        margin-left: 50vw;
+        margin-right: 50vw;
+        /* width: max-content; */
+        z-index: 100;
+
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+
+        scroll-behavior: smooth;
+
+        transition: height, bottom .5s;
+      }
+
+    }
+  }
+
+
+  /* 缩略图容器 */
+  .thumb-box {
+    & {
+      /* 滚动贴合的子元素设置 */
+      scroll-snap-align: center;
+
+      position: relative;
+      height: 100%;
+
+      width: max-content;
+      margin-left: 4px;
+      margin-right: 4px;
+
+      box-sizing: content-box;
+      border-radius: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      aspect-ratio: var(--scale);
+      content-visibility: auto;
+
+      overflow: hidden;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* justify-items: stretch; */
+
+      cursor: pointer;
+
+      transition: .5s;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      transition: .5s;
+    }
+
+    /* 正在预览时候的样式 */
+    &[data-selected="true"],
+    .thumbSelected {
+
+      box-shadow: 0 0 6px rgb(0, 231, 38);
+      filter: drop-shadow(0 0 1px rgb(0, 231, 38)) drop-shadow(0 0 2px rgb(0, 231, 38));
+      z-index: 1;
+      transform: scale(1.15);
+      transition: .5s;
+    }
+
+    .thumb-content {
+
+      /* 缩略图内容样式 */
+      & {
+        /* display: block; */
+        width: 100%;
+        height: 100%;
+
+        margin: 0 auto;
+        object-position: center;
+        /* object-fit: contain; */
+        -webkit-user-drag: none;
+        cursor: pointer;
+        aspect-ratio: var(--scale);
+        /* 居中背景图像 */
+        background-position: center;
+        /* 不重复 */
+        background-repeat: repeat;
+        background-size: contain;
+
+        /* 默认样式 */
+        opacity: 0;
+
+        /* 设置动画过渡时间 */
+        transition: 2s;
+
+      }
+
+      /* 显示时的样式 */
+      &[data-show="true"] {
+        opacity: 1;
+        transition: .5s;
+      }
+
+      /* 不显示时的样式 */
+      &[data-show="false"] {
+        opacity: 0;
+        filter: blur(2px);
+        transition: .5s;
+      }
+
+
+    }
+
+  }
+
+  /* 菜单样式 */
+  .preViewer-menu {
+    & {
+      position: absolute;
+      top: 20px;
+      right: 50px;
+      height: max-content;
+
+      border-radius: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+
+      cursor: pointer;
+      z-index: 10;
+
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+
+      transition: 0.1s;
+    }
+
+    &>.targetLocate {
+      & {
+        position: absolute;
+        top: 0;
+        z-index: -1;
+        opacity: 0;
+        transition: 0.1s;
+
+      }
+    }
+
+    &:hover>.targetLocate {
+      & {
+        position: absolute;
+        top: 54px;
+        opacity: 1;
+        z-index: 0;
+        transition: 0.1s;
+      }
+
+    }
+
+    /* 缩略图轨道按钮 */
+    .open-thumbnail-track {
+      & {
+        border-radius: inherit;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+
+        cursor: pointer;
+
+        display: block;
+        justify-content: center;
+        align-items: center;
+        transition: .5s;
+      }
+
+      &[data-open="true"] {
+        box-shadow: 1px 1px 8px rgb(0, 208, 255, 0.5);
+        filter: drop-shadow(0 0 2px rgb(0, 162, 255, 0.8)) drop-shadow(0 0 3px rgb(0, 162, 255, 0.8)) drop-shadow(0 0 4px rgb(0, 162, 255, 0.8));
+        transition: .5s;
+      }
+
+      &[data-open="true"]:hover {
+        box-shadow: 2px 2px 10px rgba(252, 236, 1);
+        filter: drop-shadow(0 0 2px rgba(252, 236, 1)) drop-shadow(0 0 3px rgba(252, 236, 1)) drop-shadow(0 0 4px rgba(252, 236, 1));
+        transition: .5s;
+      }
+
+      &[data-open="false"] {
+        box-shadow: 1px 1px 8px rgba(255, 255, 255, 0.5);
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+        transition: .5s;
+      }
+
+      &[data-open="false"]:hover {
+        box-shadow: 1px 1px 10px rgb(0, 208, 255);
+        filter: drop-shadow(0 0 2px rgb(0, 162, 255)) drop-shadow(0 0 3px rgb(0, 162, 255)) drop-shadow(0 0 4px rgb(0, 162, 255));
+        transition: .5s;
+      }
+    }
+
+    /* 图片定位按钮 */
+    .targetLocate {
+      & {
+        border-radius: inherit;
+
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+
+        box-shadow: 1px 1px 8px rgba(255, 255, 255, 0.8);
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+
+        background-color: rgba(255, 252, 252, 0.038);
+
+        cursor: pointer;
+
+        display: block;
+        justify-content: center;
+        align-items: center;
+
+        transition: .5s;
+      }
+
+      &:hover {
+        box-shadow: 1px 1px 10px rgb(0, 255, 102);
+        filter: drop-shadow(0 0 2px rgb(0, 255, 102)) drop-shadow(0 0 3px rgb(0, 255, 102)) drop-shadow(0 0 4px rgb(0, 255, 102));
+        transition: .5s;
+      }
+    }
+
+  }
+
+  /* 缩略图显示切换按钮状态为false时缩略图区域的样式 */
+  &:has(.open-thumbnail-track[data-open="false"]) #thumbnail-viewport {
+    bottom: -200px;
+    transition: .25s;
+  }
+
+  &:has(.open-thumbnail-track[data-open="true"]) #thumbnail-viewport {
+    bottom: 0;
+    transition: .25s;
+  }
+
+}
+
+/* 搜索框样式 */
+.search-container {
+  position: fixed;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  top: 40px;
+  left: 20px;
+  z-index: 3;
+  border-radius: 40px;
+  transition: 0.5s;
+  /* overflow: hidden; */
+
+  .search-box {
+    /* position: relative; */
+    background-color: white;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+    height: 40px;
+    border-radius: 40px;
+    display: flex;
+  }
+
+  .search-txt {
+    border: none;
+    background: none;
+    outline: none;
+    padding: 0;
+    color: #222;
+    font-size: 16px;
+    /* line-height: 40px; */
+    width: 0;
+    transition: 0.4s;
+  }
+
+  .search-btn {
+    color: #888888;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.4s;
+  }
+
+  .search-line {
+    position: absolute;
+    left: 40px;
+    bottom: 10px;
+    width: 0px;
+    height: 2px;
+    background-color: rgb(251, 121, 0);
+    transition: 0.3s;
+  }
+
+  .search-btn-count {
+    position: absolute;
+    font-size: 10px;
+    line-height: 14px;
+    padding: 0px 1px;
+    top: 0px;
+    right: 0px;
+    background-color: green;
+    color: white;
+    border-radius: 30%;
+    /* mix-blend-mode: difference; */
+    filter: invert(100%);
+  }
+
+  .search-box:hover .search-txt {
+    width: 200px;
+    /* padding: 0 12px; */
+  }
+
+  .search-box:hover .search-btn {
+    background-color: #fff;
+    animation: rotate 0.4s linear;
+  }
+
+  .search-txt:focus {
+    width: 200px;
+    /* padding: 0 12px; */
+  }
+
+  .search-txt:focus+.search-line {
+    width: 80%;
+  }
+
+  .clean-content {
+    position: absolute;
+    margin: auto;
+
+    right: 4px;
+    top: 0;
+    bottom: 0;
+
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+
+    transition: 0.5 ease;
+  }
+
+  &:hover .clean-content {
+    opacity: 1;
+    transition: 0.5 ease;
+  }
+
+  /* 画廊切换按钮变化时的样式 */
+  :root:has(#listPageShowSwitch[data-value="true"]) & {
+    /* 开启的效果 */
+    opacity: 1;
+  }
+
+  :root:has(#listPageShowSwitch[data-value="false"]) & {
+    /* 关闭的效果 */
+    opacity: 0;
+  }
+}
+
+/* 右键菜单样式 */
+/* 菜单容器 */
+.right-click-menu {
+  & {
+    position: fixed;
+    width: max-content;
+    width: 0;
+    height: 0;
+    z-index: -100000;
+
+    border-radius: 8px;
+    background-color: rgba(0, 255, 255, 0.314);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 2px 2px 24px rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    gap: 2px;
+    overflow: hidden;
+
+    opacity: 0;
+    display: none;
+    transition: width, height .5s;
+  }
+
+  /* 菜单显示时的样式 */
+  &[data-show="true"] {
+    display: flex;
+    width: max-content;
+    height: auto;
+    z-index: 10;
+    opacity: 1;
+    transition: width, height .5s;
+  }
+
+  /* 菜单项通用样式 */
+  .menu-option {
+    & {
+      position: relative;
+      width: 100%;
+      height: 24px;
+
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
+
+      cursor: pointer;
+
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: start;
+      align-items: center;
+      padding: 2px;
+
+      transition: .5s;
+
+    }
+
+    &:hover {
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+      transition: .5s;
+    }
+
+
+    /* 菜单中图标的样式 */
+    & svg {
+      width: 20px;
+      height: 20px;
+      transition: .5s;
+    }
+
+    &:hover svg {
+      width: 24px;
+      height: 24px;
+      transition: .5s;
+    }
+
+  }
+
+  /* [各选项样式] */
+  /* 预览 - 选项 */
+
+}
+
+/* 动画关键帧区 */
+/* 旋转360度 */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
