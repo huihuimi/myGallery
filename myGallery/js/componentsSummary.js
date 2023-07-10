@@ -1638,24 +1638,6 @@ const AppList = {
 			// ?向父组件返回数据的方法
 			this.$emit("returnListInfo", this.listInfo);
 		},
-		//f 给所有卡片添加通用属性
-		initial_addGeneralAttributesForAllCards() {
-			this.cardInfoList.forEach((card, i) => {
-				card.index = i;
-				//* 通用设置
-				card.showUrl = card.PicUrl; //? 展示栏内容的链接向置为空
-				card.metaInfoAvailable = false; //? 先标记为metaInfo无效
-				card.verified = false; //? 已验证标记
-				//* 默认属性
-				if (card.Width > 0 && card.Height > 0) {
-					//* 卡片尺寸有效：则由卡片尺寸设置卡片scale
-					card.scale = card.Width / card.Height;
-				} else {
-					//* 卡片尺寸有效：则设置卡片为默认比例
-					card.scale = this.cardDefaultaspectRatio;
-				}
-			});
-		},
 		//f 判断rect1是否完整的包含rect2
 		twoRectsContains(rect1, rect2, extraPadding = 0) {
 			const left1 = rect1.left;
@@ -1676,12 +1658,12 @@ const AppList = {
 			return top1 < top2 && bottom1 > bottom2 && left1 < left2 && right1 > right2;
 		},
 		//f (异步)获取图片、视频的信息
-		getMediaRatio(url) {
+		async getMediaRatio(url) {
 			// ?卡片默认宽高比
 			const cardDefaultaspectRatio = this.cardDefaultaspectRatio;
 			// ?取得regex
 			const regex = this.regex;
-			//* 创建并返回异步实例
+			// //* 创建并返回异步实例
 			return new Promise(function (resolve, reject) {
 				if (url != null && url != "") {
 					if (regex.isVideo.test(url)) {
@@ -1696,8 +1678,16 @@ const AppList = {
 								height: video.videoHeight,
 								scale: video.videoWidth / video.videoHeight,
 							};
-							// ?[视频类]获取参数成功返回对应信息
-							resolve(res);
+							console.log(video.videoWidth,video.videoHeight);
+							if (video.videoWidth <= 0 || video.videoHeight <= 0) {
+								res.state = "err";
+								res.width = 0;
+								res.height = 0;
+								res.scale = cardDefaultaspectRatio;
+								reject(res);
+							} else {
+								resolve(res);
+							}
 						};
 						video.onerror = function () {
 							const err = {
@@ -1732,7 +1722,15 @@ const AppList = {
 									height: img.height,
 									scale: img.width / img.height,
 								};
-								resolve(res);
+								if (img.width <= 0 || img.height <= 0) {
+									res.state = "err";
+									res.width = 0;
+									res.height = 0;
+									res.scale = cardDefaultaspectRatio;
+									reject(res);
+								} else {
+									resolve(res);
+								}
 							};
 							img.onerror = () => {
 								const err = {
